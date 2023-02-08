@@ -1,5 +1,5 @@
 <template>
-  <div ref="calendarContainer" class="min-h-full min-w-full text-gray-800">
+  <div ref="calendarContainer" class="min-h-full min-w-full text-gray-800 bg-white">
     <div class="w-full border grid grid-cols-7">
       <Top />
       <div
@@ -176,17 +176,21 @@ import Top from "@/components/Top.vue";
 import Modal from "@/components/EventsModal.vue";
 import { useCalendarStore } from "../stores/calendar";
 import { usePopover } from "../composables/popover";
+import axios from "axios";
 
-/**************************************
- * PROPS
- * ************************************
+let events = ref([]);
+
+/**
+ * Gets event data
  */
-const props = defineProps({
-  events: {
-    type: Object,
-    required: true,
-  },
-});
+const getEventData = () => {
+  axios
+      .get(import.meta.env.VITE_API_DOMAIN + '/api/events?format=json')
+      .then((response) => {
+        events = response.data
+      })
+};
+
 
 // Store initialization and subscription
 const calendarStore = useCalendarStore();
@@ -303,7 +307,7 @@ const maxThreeTodaysEvent = (day, events) => {
   events.forEach((event) => {
     if (threeTodaysEventArr.length == 3) return threeTodaysEventArr;
 
-    if (isEventToday(day, event.time.start)) {
+    if (isEventToday(day, event.start_dt)) {
       threeTodaysEventArr.push(event);
     }
   });
@@ -324,7 +328,7 @@ const allTodaysEvent = (day, events) => {
 
   let todaysEvent = [];
   events.forEach((event) => {
-    if (isEventToday(day, event.time.start)) {
+    if (isEventToday(day, event.start_dt)) {
       todaysEvent.push(event);
     }
   });
@@ -364,6 +368,8 @@ onMounted(() => {
   getDaysInMonth();
   getFirstDayOfMonth();
   lastCalendarCells();
+  // API call
+  getEventData();
 });
 
 onUpdated(() => {
