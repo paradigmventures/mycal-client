@@ -21,13 +21,13 @@
               <component :is="item.icon" class="mr-3 h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
                 aria-hidden="true" />
               <span class="flex-1" v-if="!collapsed">{{ item.name }}</span>
-              <svg
+              <svg v-if="!collapsed"
                 :class="[open ? 'text-gray-400 rotate-90' : 'text-gray-300', 'ml-3 h-5 w-5 flex-shrink-0 transform transition-colors duration-150 ease-in-out group-hover:text-gray-400']"
                 viewBox="0 0 20 20" aria-hidden="true">
                 <path d="M6 6L14 10L6 14V6Z" fill="currentColor" />
               </svg>
             </DisclosureButton>
-            <DisclosurePanel class="space-y-1">
+            <DisclosurePanel v-if="!collapsed" class="space-y-1">
               <CalendarList />
             </DisclosurePanel>
           </Disclosure>

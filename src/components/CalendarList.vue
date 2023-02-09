@@ -1,54 +1,26 @@
 <template v-if="isLoaded">
   <div v-for="calendar in calendars" :key="calendar.slug">
     <label class="group flex w-full items-center cursor-pointer rounded-md py-1 pl-8 pr-2 text-sm font-medium">
-      <div
-          class="rounded-full p-1"
-          :class="[containerColorTags[calendar.color]]"
-      >
+      <div class="rounded-full p-1" :class="[containerColorTags[calendar.color]]">
 
-        <input
-            class="form-checkbox align-text-bottom ml-2 rounded bg-gray-100 border-gray-300 focus:ring-2"
-            :class="[checkboxColorTags[calendar.color]]"
-            type="checkbox"
-            checked=""
-        >
+        <input class="form-checkbox align-text-bottom ml-2 rounded bg-gray-100 border-gray-300 focus:ring-2"
+          :class="[checkboxColorTags[calendar.color]]" type="checkbox" checked="">
 
-        <span
-            class="inline-flex items-center rounded-full pl-2 pr-2.5 py-1 text-xs font-medium"
-            :class="[labelColorTags[calendar.color]]"
-        >{{ calendar.title }}</span>
+        <span class="inline-flex items-center rounded-full pl-2 pr-2.5 py-1 text-xs font-medium"
+          :class="[labelColorTags[calendar.color]]">{{ calendar.title }}</span>
 
       </div>
     </label>
   </div>
 </template>
 
-<script>
+<script setup>
 import axios from "axios";
+import { ref, onBeforeMount } from "vue";
 
-let isLoaded = false;
-
-export default {
-  name: "CalendarList",
-  data() {
-    return {
-      calendars: [],
-      containerColorTags,
-      checkboxColorTags,
-      labelColorTags,
-    }
-  },
-  created() {
-    axios
-        .get(import.meta.env.VITE_API_DOMAIN + '/api/calendars?format=json')
-        .then((response) => {
-          this.calendars = response.data;
-          isLoaded = true;
-        })
-  },
-}
-
-const containerColorTags = {
+const isLoaded = ref(false);
+const calendars = ref([])
+const containerColorTags = ref({
   red: 'bg-red-100 hover:bg-red-200',
   orange: 'bg-orange-100 hover:bg-orange-200',
   amber: 'bg-amber-100 hover:bg-amber-200',
@@ -66,9 +38,9 @@ const containerColorTags = {
   fuchsia: 'bg-fuchsia-100 hover:bg-fuchsia-200',
   pink: 'bg-pink-100 hover:bg-pink-200',
   rose: 'bg-rose-100 hover:bg-rose-200',
-}
+})
 
-const checkboxColorTags = {
+const checkboxColorTags = ref({
   red: 'text-red-600 focus:ring-red-500',
   orange: 'text-orange-600 focus:ring-orange-500',
   amber: 'text-amber-600 focus:ring-amber-500',
@@ -86,9 +58,9 @@ const checkboxColorTags = {
   fuchsia: 'text-fuchsia-600 focus:ring-fuchsia-500',
   pink: 'text-pink-600 focus:ring-pink-500',
   rose: 'text-rose-600 focus:ring-rose-500',
-}
+})
 
-const labelColorTags = {
+const labelColorTags = ref({
   red: 'text-red-800',
   orange: 'text-orange-800',
   amber: 'text-amber-800',
@@ -106,5 +78,16 @@ const labelColorTags = {
   fuchsia: 'text-fuchsia-800',
   pink: 'text-pink-800',
   rose: ' text-rose-800',
-}
+})
+
+
+
+onBeforeMount(() => {
+  axios
+    .get(import.meta.env.VITE_API_DOMAIN + '/api/calendars?format=json')
+    .then((response) => {
+      calendars.value = response.data;
+      isLoaded.value = true;
+    })
+})
 </script>
