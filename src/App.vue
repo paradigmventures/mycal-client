@@ -1,8 +1,8 @@
 <template>
 
   <div>
-    <TransitionRoot as="template" :show="sidebarOpen">
-      <Dialog as="div" class="relative z-40 md:hidden" @close="sidebarOpen = false">
+    <TransitionRoot as="template" :show="mobileSidebarOpen">
+      <Dialog as="div" class="relative z-40 md:hidden" @close="mobileSidebarOpen = false">
         <TransitionChild as="template" enter="transition-opacity ease-linear duration-300" enter-from="opacity-0"
           enter-to="opacity-100" leave="transition-opacity ease-linear duration-300" leave-from="opacity-100"
           leave-to="opacity-0">
@@ -20,7 +20,7 @@
                 <div class="absolute top-0 right-0 -mr-12 pt-2">
                   <button type="button"
                     class="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                    @click="sidebarOpen = false">
+                    @click="mobileSidebarOpen = false">
                     <span class="sr-only">Close sidebar</span>
                     <XMarkIcon class="h-6 w-6 text-white" aria-hidden="true" />
                   </button>
@@ -38,15 +38,29 @@
     </TransitionRoot>
 
     <!-- Static sidebar for desktop -->
-    <div class="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
-      <Sidebar />
+    <!-- <div class="hidden md:fixed md:inset-y-0 md:flex md:w-14 md:flex-col" :class="[sideBarActualWidth]"> -->
+    <div class="hidden md:fixed md:inset-y-0 md:flex md:flex-col" :class="['md:w-' + sideBarActualWidth]"
+      @mouseenter="expandSideBar" @mouseleave="collapseSideBar">
+      <div class="flex w-full justify-between py-3 px-2 bg-white">
+        <div class="flex flex-shrink-0 items-center">
+          <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+            alt="Your Company" />
+        </div>
+
+        <Bars3BottomLeftIcon v-if="desktopSidebarCollapsible" @click="desktopSidebarCollapsible = false"
+          class="h-6 w-6 cursor-pointer" aria-hidden="true" />
+        <Bars3Icon v-if="!desktopSidebarCollapsible" @click="desktopSidebarCollapsible = true"
+          class="h-6 w-6 cursor-pointer" aria-hidden="true" />
+      </div>
+
+      <Sidebar :collapsed="desktopSidebarCollapsed" />
     </div>
 
-    <div class="flex flex-1 flex-col md:pl-64">
+    <div class="flex flex-1 flex-col" :class="['md:pl-' + sideBarActualWidth]">
       <div class="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white shadow">
         <button type="button"
           class="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
-          @click="sidebarOpen = true">
+          @click="mobileSidebarOpen = true">
           <span class="sr-only">Open sidebar</span>
           <Bars3BottomLeftIcon class="h-6 w-6" aria-hidden="true" />
         </button>
@@ -193,7 +207,7 @@ import { ref } from "vue";
 import Calendar from "./components/Calendar.vue";
 import Sidebar from "./components/Sidebar.vue";
 import { Dialog, DialogPanel, Menu, MenuButton, MenuItem, MenuItems, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { Bars3BottomLeftIcon, BellIcon, CalendarIcon, HomeIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { Bars3BottomLeftIcon, Bars3Icon, BellIcon, CalendarIcon, HomeIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 
 const navigation = [
   { name: 'Dashboard', icon: HomeIcon, current: false, href: '#' },
@@ -205,5 +219,31 @@ const userNavigation = [
   { name: 'Sign out', href: '#' },
 ]
 
-const sidebarOpen = ref(false)
+const mobileSidebarOpen = ref(false)
+const desktopSidebarCollapsible = ref(false)
+const desktopSidebarCollapsed = ref(false)
+
+const sideBarExpandedWidth = ref('64')
+const sideBarCollapsedWidth = ref('14')
+const sideBarActualWidth = ref(sideBarExpandedWidth.value)
+
+const expandSideBar = () => {
+  if (desktopSidebarCollapsible.value) {
+    sideBarActualWidth.value = sideBarExpandedWidth.value
+    desktopSidebarCollapsed.value = false
+  }
+  return
+}
+const collapseSideBar = () => {
+  if (desktopSidebarCollapsible.value) {
+    sideBarActualWidth.value = sideBarCollapsedWidth.value
+    desktopSidebarCollapsed.value = true
+  }
+  return
+}
+
+// DO NOT DELETE 
+const tailwindClassSefeList = [
+  'md:w-64', 'md:w-14', 'md:pl-64', 'md:pl-14'
+]
 </script>
