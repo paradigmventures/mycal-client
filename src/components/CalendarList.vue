@@ -1,7 +1,7 @@
 <template v-if="calendarListStore.getCalendarList">
   <div v-for="calendar in calendarListStore.getCalendarList" :key="calendar.slug">
-    <label class="group flex w-full items-center cursor-pointer rounded-md py-1 pl-8 pr-2 text-sm font-medium">
-      <div class="rounded-full p-1" :class="[containerColorTags[calendar.color]]">
+    <div class="group flex w-full items-center rounded-md py-1 pl-8 pr-2 text-sm font-medium">
+      <div class="rounded-full p-1 cursor-pointer" :class="[containerColorTags[calendar.color]]">
 
         <input class="form-checkbox align-text-bottom ml-2 rounded bg-gray-100 border-gray-300 focus:ring-2"
           :class="[checkboxColorTags[calendar.color]]" type="checkbox" checked="">
@@ -10,7 +10,7 @@
           :class="[labelColorTags[calendar.color]]">{{ calendar.title }}</span>
 
       </div>
-    </label>
+    </div>
   </div>
 </template>
 
