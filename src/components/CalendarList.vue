@@ -1,5 +1,5 @@
-<template v-if="isLoaded">
-  <div v-for="calendar in calendars" :key="calendar.slug">
+<template v-if="calendarListStore.getCalendarList">
+  <div v-for="calendar in calendarListStore.getCalendarList" :key="calendar.slug">
     <label class="group flex w-full items-center cursor-pointer rounded-md py-1 pl-8 pr-2 text-sm font-medium">
       <div class="rounded-full p-1" :class="[containerColorTags[calendar.color]]">
 
@@ -15,11 +15,9 @@
 </template>
 
 <script setup>
-import axios from "axios";
-import { ref, onBeforeMount } from "vue";
+import { ref } from "vue";
+import { useCalendarListStore } from '../stores/calendar-list'
 
-const isLoaded = ref(false);
-const calendars = ref([])
 const containerColorTags = ref({
   red: 'bg-red-100 hover:bg-red-200',
   orange: 'bg-orange-100 hover:bg-orange-200',
@@ -80,14 +78,9 @@ const labelColorTags = ref({
   rose: ' text-rose-800',
 })
 
+// Store initialization and subscription
+const calendarListStore = useCalendarListStore();
 
-
-onBeforeMount(() => {
-  axios
-    .get(import.meta.env.VITE_API_DOMAIN + '/api/calendars?format=json')
-    .then((response) => {
-      calendars.value = response.data;
-      isLoaded.value = true;
-    })
-})
+// Fetch calendar list
+calendarListStore.fetchList()
 </script>
