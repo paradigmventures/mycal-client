@@ -168,19 +168,27 @@ import Top from "@/components/Top.vue";
 import Modal from "@/components/EventsModal.vue";
 import { useCalendarStore } from "../stores/calendar";
 import { useCalendarEventStore } from "../stores/calendar-event";
+import { useCalendarListStore } from "../stores/calendar-list";
 import { usePopover } from "../composables/popover";
 import axios from "axios";
 
 const events = ref([]);
 
-// Store initialization and subscription
+/**
+ * Store initialization and subscription
+ */
 // Calendar events store
 const calendarEventStore = useCalendarEventStore();
-// Calendar store
+// Calendar store & subscription
 const calendarStore = useCalendarStore();
 calendarStore.$subscribe((mutation, state) => {
   getDaysInMonth();
   getFirstDayOfMonth();
+});
+// Calendar list store & subscription
+const calendarListStore = useCalendarListStore();
+calendarListStore.$subscribe((mutation, state) => {
+  events.value = calendarEventStore.getFilteredCalendarEvents;
 });
 
 // component variables
@@ -354,7 +362,7 @@ onMounted(() => {
   lastCalendarCells();
   // API call
   calendarEventStore.fetchEvent().then(() => {
-    events.value = calendarEventStore.getCalendarEvent;
+    events.value = calendarEventStore.getFilteredCalendarEvents;
   });
 });
 

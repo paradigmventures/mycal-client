@@ -1,12 +1,21 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import axios from "axios";
+import { useCalendarListStore } from "./calendar-list";
 
 export const useCalendarEventStore = defineStore("calendar-event", () => {
   const calendarEvent = ref([]);
 
   const getCalendarEvent = computed(() => {
     return calendarEvent.value;
+  });
+
+  const getFilteredCalendarEvents = computed(() => {
+    const calendarListStore = useCalendarListStore();
+
+    return calendarEvent.value.filter((event) =>
+      calendarListStore.getSelectedList.includes(event.calendar)
+    );
   });
 
   const fetchEvent = async () => {
@@ -19,6 +28,7 @@ export const useCalendarEventStore = defineStore("calendar-event", () => {
 
   return {
     fetchEvent,
+    getFilteredCalendarEvents,
     getCalendarEvent,
   };
 });
