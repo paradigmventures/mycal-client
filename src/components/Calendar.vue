@@ -29,7 +29,7 @@
           <div
             v-for="day in daysInCurrentMonth"
             :key="day"
-            :class="'bg-white relative py-2 px-3'"
+            :class="'bg-white relative py-2 px-2'"
           >
             <time
               :datetime="day.date"
@@ -46,18 +46,27 @@
                 v-for="evt in maxThreeTodaysEvent(day, events)"
                 :key="evt.id"
                 @click="togglePopover($event, evt)"
+                class="w-full mt-2 group flex cursor-pointer items-center rounded px-1 py-0.5 text-xs font-medium"
+                :class="[
+                  getContainerColor(evt.calendar),
+                  getTextColor(evt.calendar),
+                ]"
               >
-                <span class="group flex cursor-pointer">
-                  <p
-                    class="flex-auto truncate font-medium text-gray-900 group-hover:text-indigo-600"
+                <span
+                  class="w-full flex whitespace-nowrap items-center overflow-x-hidden"
+                >
+                  <svg
+                    class="h-2 w-1/5"
+                    :class="[getCircleColor(evt.calendar)]"
+                    fill="currentColor"
+                    viewBox="0 0 8 8"
                   >
+                    <circle cx="4" cy="4" r="3" />
+                  </svg>
+
+                  <span class="w-4/5">
                     {{ evt.title }}
-                  </p>
-                  <time
-                    :datetime="evt.start_dt"
-                    class="ml-3 hidden flex-none text-gray-500 group-hover:text-indigo-600 xl:block"
-                    >{{ new Date(Date.parse(evt.start_dt)).getHours() }}</time
-                  >
+                  </span>
                 </span>
               </li>
               <!-- <li
@@ -170,6 +179,7 @@ import { useCalendarStore } from "../stores/calendar";
 import { useCalendarEventStore } from "../stores/calendar-event";
 import { useCalendarListStore } from "../stores/calendar-list";
 import { usePopover } from "../composables/popover";
+import { useCalendarColor } from "../composables/calendar-colors.js";
 import axios from "axios";
 
 const events = ref([]);
@@ -190,6 +200,45 @@ const calendarListStore = useCalendarListStore();
 calendarListStore.$subscribe((mutation, state) => {
   events.value = calendarEventStore.getFilteredCalendarEvents;
 });
+
+const { containerColorTags, checkboxColorTags, labelColorTags } =
+  useCalendarColor();
+
+/**
+ * Get the current event container color
+ * @param {string} calendarList The current calendar list
+ */
+const getContainerColor = (calendarList) => {
+  let listColor = calendarListStore.getCalendarList.filter(
+    (list) => list.slug === calendarList
+  );
+
+  return containerColorTags.value[listColor[0].color];
+};
+
+/**
+ * Get the current event text color
+ * @param {string} calendarList The current calendar list
+ */
+const getTextColor = (calendarList) => {
+  let listColor = calendarListStore.getCalendarList.filter(
+    (list) => list.slug === calendarList
+  );
+
+  return labelColorTags.value[listColor[0].color];
+};
+
+/**
+ * Get the current event circle color
+ * @param {string} calendarList The current calendar list
+ */
+const getCircleColor = (calendarList) => {
+  let listColor = calendarListStore.getCalendarList.filter(
+    (list) => list.slug === calendarList
+  );
+
+  return checkboxColorTags.value[listColor[0].color];
+};
 
 // component variables
 const daysOfTheWeek = {
