@@ -51,8 +51,7 @@ const selectedListChange = () => {
 
 onBeforeMount(() => {
   // Fetch calendar list
-  calendarListStore.fetchList().then(() => {
-    selectedList.value = calendarListStore.getSelectedList;
-  });
+  calendarListStore.fetchList();
+  selectedList.value = calendarListStore.getSelectedList;
 });
 </script>
