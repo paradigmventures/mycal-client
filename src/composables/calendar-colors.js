@@ -1,4 +1,5 @@
 import { ref } from "vue";
+import { useCalendarListStore } from "../stores/calendar-list";
 
 export function useCalendarColor() {
   // state encapsulated and managed by the composable
@@ -63,6 +64,52 @@ export function useCalendarColor() {
     rose: "text-rose-800",
   });
 
+  // Calendar list store
+  const calendarListStore = useCalendarListStore();
+
+  /**
+   * Get the current event container color
+   * @param {string} calendarList The current calendar list
+   */
+  const getContainerColor = (calendarList) => {
+    let listColor = calendarListStore.getCalendarList.filter(
+      (list) => list.slug === calendarList
+    );
+
+    return containerColorTags.value[listColor[0].color];
+  };
+
+  /**
+   * Get the current event text color
+   * @param {string} calendarList The current calendar list
+   */
+  const getTextColor = (calendarList) => {
+    let listColor = calendarListStore.getCalendarList.filter(
+      (list) => list.slug === calendarList
+    );
+
+    return labelColorTags.value[listColor[0].color];
+  };
+
+  /**
+   * Get the current event circle color
+   * @param {string} calendarList The current calendar list
+   */
+  const getCircleColor = (calendarList) => {
+    let listColor = calendarListStore.getCalendarList.filter(
+      (list) => list.slug === calendarList
+    );
+
+    return checkboxColorTags.value[listColor[0].color];
+  };
+
   // expose managed state as return value
-  return { containerColorTags, checkboxColorTags, labelColorTags };
+  return {
+    containerColorTags,
+    checkboxColorTags,
+    labelColorTags,
+    getContainerColor,
+    getTextColor,
+    getCircleColor,
+  };
 }

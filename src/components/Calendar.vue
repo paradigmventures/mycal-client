@@ -201,44 +201,14 @@ calendarListStore.$subscribe((mutation, state) => {
   events.value = calendarEventStore.getFilteredCalendarEvents;
 });
 
-const { containerColorTags, checkboxColorTags, labelColorTags } =
-  useCalendarColor();
-
-/**
- * Get the current event container color
- * @param {string} calendarList The current calendar list
- */
-const getContainerColor = (calendarList) => {
-  let listColor = calendarListStore.getCalendarList.filter(
-    (list) => list.slug === calendarList
-  );
-
-  return containerColorTags.value[listColor[0].color];
-};
-
-/**
- * Get the current event text color
- * @param {string} calendarList The current calendar list
- */
-const getTextColor = (calendarList) => {
-  let listColor = calendarListStore.getCalendarList.filter(
-    (list) => list.slug === calendarList
-  );
-
-  return labelColorTags.value[listColor[0].color];
-};
-
-/**
- * Get the current event circle color
- * @param {string} calendarList The current calendar list
- */
-const getCircleColor = (calendarList) => {
-  let listColor = calendarListStore.getCalendarList.filter(
-    (list) => list.slug === calendarList
-  );
-
-  return checkboxColorTags.value[listColor[0].color];
-};
+const {
+  containerColorTags,
+  checkboxColorTags,
+  labelColorTags,
+  getContainerColor,
+  getTextColor,
+  getCircleColor,
+} = useCalendarColor();
 
 // component variables
 const daysOfTheWeek = {
