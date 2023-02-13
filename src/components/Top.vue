@@ -1,111 +1,135 @@
 <template>
-  <div class="col-span-7">
-    <div class="w-full flex justify-between items-center">
-      <!-- Current month and year -->
-      <div class="w-1/3 p-2 md:p-4">
-        <div
-          class="w-full inline-flex space-x-1 text-sm md:text-xl lg:text-2xl text-left font-bold md:font-semibold"
+  <header
+    class="flex items-center justify-between border-b border-gray-200 py-4 px-6 lg:flex-none"
+  >
+    <h1 class="text-lg font-semibold text-gray-900">
+      <time datetime="2022-01">{{ monthStr }} {{ calendarStore.getYear }}</time>
+    </h1>
+    <div class="flex items-center">
+      <div class="flex items-center rounded-md shadow-sm md:items-stretch">
+        <button
+          type="button"
+          class="flex items-center justify-center rounded-l-md border border-r-0 border-gray-300 bg-white py-2 pl-3 pr-4 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:px-2 md:hover:bg-gray-50"
+          @click="calendarStore.decrementMonth(1)"
         >
-          <span class="md:hidden">{{ shortMonthStr }}</span
-          ><span class="hidden md:block">{{ monthStr }}</span
-          ><span>{{ calendarStore.getYear }}</span>
-        </div>
+          <span class="sr-only">Previous month</span>
+          <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          class="hidden border-t border-b border-gray-300 bg-white px-3.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:relative md:block"
+          @click="calendarStore.resetDate()"
+        >
+          Today
+        </button>
+        <span class="relative -mx-px h-5 w-px bg-gray-300 md:hidden" />
+        <button
+          type="button"
+          class="flex items-center justify-center rounded-r-md border border-l-0 border-gray-300 bg-white py-2 pl-4 pr-3 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:px-2 md:hover:bg-gray-50"
+          @click="calendarStore.incrementMonth(1)"
+        >
+          <span class="sr-only">Next month</span>
+          <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
+        </button>
       </div>
-      <!-- -------------------------- -->
-
-      <!-- Naviigation -->
-      <div
-        class="hidden md:flex w-1/3 items-center justify-center text-gray-600"
-      >
-        <div class="flex space-x-3 items-center">
-          <div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-5 h-5 hover:text-gray-800 cursor-pointer hover:h-6 hover:w-6 transition-all"
-              @click="calendarStore.decrementMonth(1)"
+      <div class="hidden md:ml-4 md:flex md:items-center">
+        <Datepicker
+          v-model="date"
+          auto-apply
+          close-on-scroll
+          @update:modelValue="handleDate"
+        >
+          <template #trigger>
+            <div
+              class="flex space-x-1 md:space-x-2 justify-around items-center border rounded-sm px-2 md:px-5 py-1 md:py-2 cursor-pointer hover:bg-gray-200 text-gray-700 hover:text-gray-900 transition-colors"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5"
-              />
-            </svg>
-          </div>
-          <div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-5 h-5 hover:text-gray-800 cursor-pointer hover:h-6 hover:w-6 transition-all"
-              @click="calendarStore.incrementMonth(1)"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5"
-              />
-            </svg>
-          </div>
-        </div>
-      </div>
-      <!-- ----------------------------- -->
-
-      <!-- Date picker and date view -->
-      <div class="w-2/3 md:w-1/3 flex justify-end pr-2 md:pr-4">
-        <div class="flex space-x-2 md:space-x-5">
-          <Datepicker
-            v-model="date"
-            auto-apply
-            close-on-scroll
-            @update:modelValue="handleDate"
-          >
-            <template #trigger>
-              <div
-                class="flex space-x-1 md:space-x-2 justify-around items-center border rounded-sm px-2 md:px-5 py-1 md:py-2 cursor-pointer hover:bg-gray-200 transition-colors"
-              >
-                <div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="w-6 h-6"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h1 class="text-xs md:text-base font-medium md:font-semibold">
-                    {{ shortMonthStr }}
-                  </h1>
-                </div>
+              <div>
+                <CalendarDaysIcon class="w-6 h-6" />
               </div>
-            </template>
-          </Datepicker>
-
-          <div
-            class="flex justify-center items-center border rounded-sm px-2 md:px-5 py-1 md:py-2 cursor-pointer hover:bg-gray-200 transition-colors"
-            @click="calendarStore.resetDate()"
-          >
-            <h1 class="text-xs md:text-base font-medium md:font-semibold">
-              Today
-            </h1>
-          </div>
-        </div>
+              <div>
+                <h1 class="text-xs md:text-base font-medium">
+                  {{ shortMonthStr }}
+                </h1>
+              </div>
+            </div>
+          </template>
+        </Datepicker>
+        <div class="ml-6 h-6 w-px bg-gray-300" />
+        <button
+          type="button"
+          class="ml-6 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Add event
+        </button>
       </div>
+      <Menu as="div" class="relative ml-6 md:hidden">
+        <MenuButton
+          class="-mx-2 flex items-center rounded-full border border-transparent p-2 text-gray-400 hover:text-gray-500"
+        >
+          <span class="sr-only">Open menu</span>
+          <EllipsisHorizontalIcon class="h-5 w-5" aria-hidden="true" />
+        </MenuButton>
+
+        <transition
+          enter-active-class="transition ease-out duration-100"
+          enter-from-class="transform opacity-0 scale-95"
+          enter-to-class="transform opacity-100 scale-100"
+          leave-active-class="transition ease-in duration-75"
+          leave-from-class="transform opacity-100 scale-100"
+          leave-to-class="transform opacity-0 scale-95"
+        >
+          <MenuItems
+            class="absolute right-0 z-10 mt-3 w-36 origin-top-right divide-y divide-gray-100 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+          >
+            <div class="py-1">
+              <MenuItem v-slot="{ active }">
+                <a
+                  href="#"
+                  :class="[
+                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    'block px-4 py-2 text-sm',
+                  ]"
+                  >Create event</a
+                >
+              </MenuItem>
+            </div>
+            <div class="py-1">
+              <MenuItem v-slot="{ active }">
+                <span
+                  :class="[
+                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    'block px-4 py-2 text-sm',
+                  ]"
+                  @click="calendarStore.resetDate()"
+                  >Go to today</span
+                >
+              </MenuItem>
+
+              <Datepicker
+                v-model="date"
+                auto-apply
+                close-on-scroll
+                @update:modelValue="handleDate"
+              >
+                <template #trigger>
+                  <div
+                    class="flex space-x-1 md:space-x-2 justify-start items-center border rounded-sm px-2 md:px-5 py-1 md:py-2 cursor-pointer hover:bg-gray-200 text-gray-700 hover:text-gray-900 transition-colors"
+                  >
+                    <div>
+                      <CalendarDaysIcon class="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h1 class="text-sm">select date</h1>
+                    </div>
+                  </div>
+                </template>
+              </Datepicker>
+            </div>
+          </MenuItems>
+        </transition>
+      </Menu>
     </div>
-  </div>
+  </header>
 </template>
 
 <script setup>
@@ -113,6 +137,13 @@ import { ref, onMounted } from "vue";
 import { useCalendarStore } from "../stores/calendar";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import {
+  CalendarDaysIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  EllipsisHorizontalIcon,
+} from "@heroicons/vue/20/solid";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 
 // Store initialization and subscription
 const calendarStore = useCalendarStore();
