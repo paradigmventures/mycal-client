@@ -22,7 +22,7 @@
         <h4
           v-for="(evt, index) in events"
           :key="index"
-          class="my-2 h-full w-full whitespace-nowrap rounded-md flex items-center"
+          class="my-2 h-full w-full whitespace-nowrap rounded-md flex items-center cursor-pointer"
           :class="[getBgColor(evt.calendar), getTextColor(evt.calendar)]"
           @click="$emit('togglePopover', $event, evt)"
         >
