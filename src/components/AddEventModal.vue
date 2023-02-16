@@ -1,6 +1,6 @@
 <template>
   <TransitionRoot as="template" :show="open">
-    <Dialog as="div" class="relative z-10" @close="open = false">
+    <Dialog as="div" class="relative z-10" @click="$emit('closeModal')">
       <TransitionChild
         as="template"
         enter="ease-out duration-300"
@@ -29,13 +29,13 @@
             leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <DialogPanel
-              class="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
+              class="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 text-left shadow-xl transition-all sm:mt-8 sm:w-full sm:max-w-lg sm:p-6"
             >
               <div class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
                 <button
                   type="button"
                   class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  @click="open = false"
+                  @click="$emit('closeModal')"
                 >
                   <span class="sr-only">Close</span>
                   <XMarkIcon class="h-6 w-6" aria-hidden="true" />
@@ -43,44 +43,41 @@
               </div>
               <div class="sm:flex sm:items-start">
                 <div
-                  class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
+                  class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10"
                 >
-                  <ExclamationTriangleIcon
-                    class="h-6 w-6 text-red-600"
+                  <PlusIcon
+                    class="h-6 w-6 text-indigo-600"
                     aria-hidden="true"
                   />
                 </div>
-                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                <div
+                  class="grow lg:pr-12 mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left"
+                >
                   <DialogTitle
                     as="h3"
                     class="text-lg font-medium leading-6 text-gray-900"
-                    >Deactivate account</DialogTitle
+                    >Add event</DialogTitle
                   >
                   <div class="mt-2">
-                    <p class="text-sm text-gray-500">
-                      Are you sure you want to deactivate your account? All of
-                      your data will be permanently removed from our servers
-                      forever. This action cannot be undone.
-                    </p>
+                    <AddEventForm @close-modal="$emit('closeModal')" />
                   </div>
                 </div>
               </div>
-              <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+              <!-- <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                 <button
                   type="button"
                   class="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
-                  @click="open = false"
                 >
                   Deactivate
                 </button>
                 <button
                   type="button"
                   class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
-                  @click="open = false"
+                  @click="$emit('closeModal')"
                 >
                   Cancel
                 </button>
-              </div>
+              </div> -->
             </DialogPanel>
           </TransitionChild>
         </div>
@@ -90,7 +87,6 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import {
   Dialog,
   DialogPanel,
@@ -98,7 +94,8 @@ import {
   TransitionChild,
   TransitionRoot,
 } from "@headlessui/vue";
-import { ExclamationTriangleIcon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { PlusIcon, XMarkIcon } from "@heroicons/vue/24/outline";
+import AddEventForm from "./AddEventForm.vue";
 
-const open = ref(true);
+defineProps({ open: Boolean });
 </script>

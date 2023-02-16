@@ -96,7 +96,10 @@
       <Sidebar :collapsed="desktopSidebarCollapsed" />
     </div>
 
-    <div class="flex flex-1 flex-col" :class="['md:pl-' + sideBarActualWidth]">
+    <div
+      class="lg:min-h-screen flex flex-1 flex-col"
+      :class="['md:pl-' + sideBarActualWidth]"
+    >
       <div class="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white shadow">
         <button
           type="button"
@@ -163,8 +166,8 @@
         </div>
       </div>
 
-      <main>
-        <div class="p-6">
+      <main class="lg:grow lg:h-full lg:flex lg:flex-col">
+        <div class="lg:flex-1 lg:block p-6">
           <!-- begin calendar //-->
           <Calendar>
             <template #eventDialog="props">

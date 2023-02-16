@@ -23,13 +23,13 @@
             v-if="firstDayOfCurrentMonth > 0"
             v-for="day in firstDayOfCurrentMonth"
             :key="day"
-            :class="'bg-gray-50 text-gray-500 relative py-2 px-3'"
+            :class="'lg:h-36 bg-gray-50 text-gray-500 relative py-2 px-3'"
           ></div>
 
           <div
             v-for="day in daysInCurrentMonth"
             :key="day"
-            :class="'bg-white relative py-2 px-2'"
+            :class="'lg:h-36 bg-white relative py-1 px-2'"
           >
             <time
               :datetime="day.date"
@@ -41,7 +41,7 @@
             >
               {{ day }}
             </time>
-            <ol v-if="maxThreeTodaysEvent(day, events).length" class="mt-2">
+            <ol v-if="maxThreeTodaysEvent(day, events).length" class="mt-1">
               <li
                 v-for="evt in maxThreeTodaysEvent(day, events)"
                 :key="evt.id"
@@ -76,7 +76,7 @@
               > -->
               <li
                 v-if="allTodaysEvent(day, events).length > 3"
-                class="text-gray-500 cursor-pointer"
+                class="mt-1 text-gray-500 cursor-pointer"
               >
                 + {{ allTodaysEvent(day, events).length - 3 }} more
               </li>
@@ -87,7 +87,7 @@
             v-if="lastEmptyCells > 0"
             v-for="day in lastEmptyCells"
             :key="day"
-            :class="'bg-gray-50 text-gray-500 relative py-2 px-3'"
+            :class="'lg:h-36 bg-gray-50 text-gray-500 relative py-2 px-3'"
           ></div>
         </div>
 
@@ -187,8 +187,15 @@ const events = ref([]);
 /**
  * Store initialization and subscription
  */
-// Calendar events store
+// Calendar events store & subscription
 const calendarEventStore = useCalendarEventStore();
+calendarEventStore.$subscribe((mutation, state) => {
+  // API call
+  calendarEventStore.fetchEvent().then(() => {
+    events.value = calendarEventStore.getFilteredCalendarEvents;
+  });
+});
+
 // Calendar store & subscription
 const calendarStore = useCalendarStore();
 calendarStore.$subscribe((mutation, state) => {
