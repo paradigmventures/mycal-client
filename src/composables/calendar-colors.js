@@ -24,6 +24,26 @@ export function useCalendarColor() {
     rose: "bg-rose-100 hover:bg-rose-200",
   });
 
+  const bgColorTags = ref({
+    red: "bg-red-600 hover:bg-red-400",
+    orange: "bg-orange-600 hover:bg-orange-400",
+    amber: "bg-amber-600 hover:bg-amber-400",
+    yellow: "bg-yellow-600 hover:bg-yellow-400",
+    lime: "bg-lime-600 hover:bg-lime-400",
+    green: "bg-green-600 hover:bg-green-400",
+    emerald: "bg-emerald-600 hover:bg-emerald-400",
+    teal: "bg-teal-600 hover:bg-teal-400",
+    cyan: "bg-cyan-600 hover:bg-cyan-400",
+    sky: "bg-sky-600 hover:bg-sky-400",
+    blue: "bg-blue-600 hover:bg-blue-400",
+    indigo: "bg-indigo-600 hover:bg-indigo-400",
+    violet: "bg-violet-600 hover:bg-violet-400",
+    purple: "bg-purple-600 hover:bg-purple-400",
+    fuchsia: "bg-fuchsia-600 hover:bg-fuchsia-400",
+    pink: "bg-pink-600 hover:bg-pink-400",
+    rose: "bg-rose-600 hover:bg-rose-400",
+  });
+
   const checkboxColorTags = ref({
     red: "text-red-600 focus:ring-red-500",
     orange: "text-orange-600 focus:ring-orange-500",
@@ -103,13 +123,27 @@ export function useCalendarColor() {
     return checkboxColorTags.value[listColor[0].color];
   };
 
+  /**
+   * Get the current event background color
+   * @param {string} calendarList The current calendar list
+   */
+  const getBgColor = (calendarList) => {
+    let listColor = calendarListStore.getCalendarList.filter(
+      (list) => list.slug === calendarList
+    );
+
+    return bgColorTags.value[listColor[0].color];
+  };
+
   // expose managed state as return value
   return {
     containerColorTags,
     checkboxColorTags,
     labelColorTags,
+    bgColorTags,
     getContainerColor,
     getTextColor,
     getCircleColor,
+    getBgColor,
   };
 }
