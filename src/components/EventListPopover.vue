@@ -13,7 +13,7 @@
       </div>
     </div>
 
-    <div class="h-56 lg:h-64 w-full col-span-3 overflow-y-auto">
+    <div class="h-48 lg:h-56 w-full col-span-3 overflow-y-auto">
       <div class="w-full">
         <h2 class="text-base md:text-lg font-medium text-gray-700">
           {{ modalDate.toDateString() }}
@@ -26,9 +26,16 @@
           :class="[getBgColor(evt.calendar), getTextColor(evt.calendar)]"
           @click="$emit('togglePopover', $event, evt)"
         >
-          <span v-if="true" class="w-4 rounded-l-md" />
+          <span v-if="largerThanMd && index > 2" class="w-4 rounded-l-md" />
+          <span v-else-if="!largerThanMd" class="w-4 rounded-l-md" />
           <span
-            v-if="true"
+            v-if="largerThanMd && index > 2"
+            class="h-full w-full px-2 py-1 text-sm font-normal"
+            :class="[getContainerColor(evt.calendar)]"
+            >{{ evt.title }}</span
+          >
+          <span
+            v-else-if="!largerThanMd"
             class="h-full w-full px-2 py-1 text-sm font-normal"
             :class="[getContainerColor(evt.calendar)]"
             >{{ evt.title }}</span
@@ -43,6 +50,14 @@
 import { XMarkIcon } from "@heroicons/vue/24/outline";
 import { ref, onMounted } from "vue";
 import { useCalendarColor } from "../composables/calendar-colors.js";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+
+/**
+ * get screen breakpoint to determine if we're displaying the unlisted events(for desktop screens)
+ * or we're displaying all events(mobile screens)
+ */
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const largerThanMd = breakpoints.greater("md"); // only larger than md
 
 const props = defineProps({
   events: Array,
