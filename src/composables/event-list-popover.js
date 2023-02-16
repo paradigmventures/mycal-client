@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { createPopper } from "@popperjs/core";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
@@ -7,6 +7,8 @@ export function useEventListPopover(popoverRef) {
   const pShow = ref(false);
   const eList = ref([]);
   const pDay = ref(0);
+
+  const getPDay = computed(() => pDay.value);
 
   /**
    * get screen breakpoint to determine popover placement
@@ -38,5 +40,5 @@ export function useEventListPopover(popoverRef) {
   };
 
   // expose managed state as return value
-  return { pDay, pShow, eList, tPopover };
+  return { getPDay, pShow, eList, tPopover };
 }

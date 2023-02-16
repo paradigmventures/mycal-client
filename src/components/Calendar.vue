@@ -159,9 +159,10 @@
     class="bg-gray-100 mb-3 block z-50 max-w-xs rounded-lg shadow-lg"
   >
     <EventListPopover
+      v-if="pShow"
       :events="eList"
       @close="tPopover()"
-      :day="pDay"
+      :day="getPDay"
       :month="calendarStore.getMonth"
       :year="calendarStore.getYear"
       @togglePopover="(event, evt) => togglePopover(event, evt)"
@@ -246,7 +247,7 @@ const eventListPopoverRef = ref(null);
 
 // popover composable
 const { popoverShow, todaysEvent, togglePopover } = usePopover(popoverRef);
-const { pDay, pShow, eList, tPopover } =
+const { getPDay, pShow, eList, tPopover } =
   useEventListPopover(eventListPopoverRef);
 
 /**
