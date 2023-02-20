@@ -23,13 +23,13 @@
             v-if="firstDayOfCurrentMonth > 0"
             v-for="day in firstDayOfCurrentMonth"
             :key="day"
-            :class="'bg-gray-50 text-gray-500 relative py-2 px-3'"
+            :class="'lg:h-36 bg-gray-50 text-gray-500 relative py-2 px-3'"
           ></div>
 
           <div
             v-for="day in daysInCurrentMonth"
             :key="day"
-            :class="'bg-white relative py-2 px-2'"
+            :class="'lg:h-36 bg-white relative py-1 px-2'"
           >
             <time
               :datetime="day.date"
@@ -41,7 +41,7 @@
             >
               {{ day }}
             </time>
-            <ol v-if="maxThreeTodaysEvent(day, events).length" class="mt-2">
+            <ol v-if="maxThreeTodaysEvent(day, events).length" class="mt-1">
               <li
                 v-for="evt in maxThreeTodaysEvent(day, events)"
                 :key="evt.id"
@@ -69,14 +69,10 @@
                   </span>
                 </span>
               </li>
-              <!-- <li
-                v-if="allTodaysEvent(day, events).length > 3"
-                @click="openModal(day, allTodaysEvent(day, events))"
-                class="text-gray-500 cursor-pointer"
-              > -->
               <li
                 v-if="allTodaysEvent(day, events).length > 3"
-                class="text-gray-500 cursor-pointer"
+                class="mt-1 text-gray-500 cursor-pointer"
+                @click="tPopover($event, allTodaysEvent(day, events), day)"
               >
                 + {{ allTodaysEvent(day, events).length - 3 }} more
               </li>
@@ -87,7 +83,7 @@
             v-if="lastEmptyCells > 0"
             v-for="day in lastEmptyCells"
             :key="day"
-            :class="'bg-gray-50 text-gray-500 relative py-2 px-3'"
+            :class="'lg:h-36 bg-gray-50 text-gray-500 relative py-2 px-3'"
           ></div>
         </div>
 
@@ -108,6 +104,7 @@
               isToday(day) ? 'font-semibold text-indigo-600' : 'text-gray-900',
               'flex h-14 flex-col py-2 px-3 hover:bg-gray-100 focus:z-10',
             ]"
+            @click="tPopover($event, allTodaysEvent(day, events), day)"
           >
             <time
               :datetime="day.date"
@@ -145,7 +142,7 @@
   </div>
 
   <!-- use the modal component -->
-  <transition name="modal">
+  <!-- <transition name="modal">
     <Modal
       v-if="modalShow"
       @close-modal="closeModal"
@@ -155,7 +152,22 @@
       :year="calendarStore.getYear"
       :events="modalEvents"
     />
-  </transition>
+  </transition> -->
+  <div
+    ref="eventListPopoverRef"
+    :class="{ hidden: !pShow, block: pShow }"
+    class="bg-gray-100 mb-3 block z-50 max-w-xs rounded-lg shadow-lg"
+  >
+    <EventListPopover
+      v-if="pShow"
+      :events="eList"
+      @close="tPopover()"
+      :day="getPDay"
+      :month="calendarStore.getMonth"
+      :year="calendarStore.getYear"
+      @togglePopover="(event, evt) => togglePopover(event, evt)"
+    />
+  </div>
 
   <!-- popover component  -->
   <div
@@ -174,21 +186,28 @@
 <script setup>
 import { ref, onMounted, onUpdated } from "vue";
 import Top from "@/components/Top.vue";
-import Modal from "@/components/EventsModal.vue";
 import { useCalendarStore } from "../stores/calendar";
 import { useCalendarEventStore } from "../stores/calendar-event";
 import { useCalendarListStore } from "../stores/calendar-list";
 import { usePopover } from "../composables/popover";
+import { useEventListPopover } from "../composables/event-list-popover";
 import { useCalendarColor } from "../composables/calendar-colors.js";
-import axios from "axios";
+import EventListPopover from "./EventListPopover.vue";
 
 const events = ref([]);
 
 /**
  * Store initialization and subscription
  */
-// Calendar events store
+// Calendar events store & subscription
 const calendarEventStore = useCalendarEventStore();
+calendarEventStore.$subscribe((mutation, state) => {
+  // API call
+  calendarEventStore.fetchEvent().then(() => {
+    events.value = calendarEventStore.getFilteredCalendarEvents;
+  });
+});
+
 // Calendar store & subscription
 const calendarStore = useCalendarStore();
 calendarStore.$subscribe((mutation, state) => {
@@ -223,13 +242,13 @@ const daysOfTheWeek = {
 const daysInCurrentMonth = ref(0);
 const firstDayOfCurrentMonth = ref(0);
 const lastEmptyCells = ref(0);
-const modalShow = ref(false);
-const modalDay = ref(0);
 const popoverRef = ref(null);
-const modalEvents = ref([]);
+const eventListPopoverRef = ref(null);
 
 // popover composable
 const { popoverShow, todaysEvent, togglePopover } = usePopover(popoverRef);
+const { getPDay, pShow, eList, tPopover } =
+  useEventListPopover(eventListPopoverRef);
 
 /**
  * Gets the number of days present in a month
@@ -345,30 +364,6 @@ const allTodaysEvent = (day, events) => {
   });
 
   return todaysEvent;
-};
-
-/**
- * Open the event details modal
- *
- * @param {number} day current calendar month day
- * @param {array} events Array of events objects to show on the modal
- *
- * @return null
- */
-const openModal = (day, events) => {
-  popoverShow.value = false; // close any open popover before opening modal
-  modalEvents.value = events;
-  modalDay.value = day;
-  modalShow.value = true;
-};
-
-/**
- * Close the event details modal
- */
-const closeModal = () => {
-  modalEvents.value = [];
-  modalShow.value = false;
-  modalDay.value = 0;
 };
 
 /************************************************************************

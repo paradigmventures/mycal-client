@@ -58,6 +58,7 @@
         <button
           type="button"
           class="ml-6 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          @click="isModalShowing = true"
         >
           Add event
         </button>
@@ -83,13 +84,13 @@
           >
             <div class="py-1">
               <MenuItem v-slot="{ active }">
-                <a
-                  href="#"
+                <span
                   :class="[
                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                    'block px-4 py-2 text-sm',
+                    'block px-4 py-2 text-sm cursor-pointer',
                   ]"
-                  >Create event</a
+                  @click="isModalShowing = true"
+                  >Add event</span
                 >
               </MenuItem>
             </div>
@@ -130,11 +131,14 @@
       </Menu>
     </div>
   </header>
+
+  <AddEventModal :open="isModalShowing" @close-modal="isModalShowing = false" />
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import { useCalendarStore } from "../stores/calendar";
+import AddEventModal from "./AddEventModal.vue";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import {
@@ -194,6 +198,9 @@ const handleDate = (modelData) => {
 
   // do something else with the data
 };
+
+// The add event modal state
+const isModalShowing = ref(false);
 
 /************************************************************************
  *  LIFECYCLE HOOKS

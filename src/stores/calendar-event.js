@@ -26,8 +26,30 @@ export const useCalendarEventStore = defineStore("calendar-event", () => {
       });
   };
 
+  const addEvent = async (event) => {
+    // construct a new event object
+    let newEventObj = {
+      calendar: event.calendar,
+      title: event.title,
+      description: event.description,
+      start_dt: event.start_dt + ":00Z",
+      end_dt: event.end_dt + ":00Z",
+    };
+
+    await axios
+      .post(import.meta.env.VITE_API_DOMAIN + "/api/events?format=json", event)
+      .then((response) => {
+        calendarEvent.value.push(newEventObj);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+  };
+
   return {
     fetchEvent,
+    addEvent,
+    calendarEvent,
     getFilteredCalendarEvents,
     getCalendarEvent,
   };
