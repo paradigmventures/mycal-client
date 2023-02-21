@@ -203,9 +203,9 @@ const events = ref([]);
 const calendarEventStore = useCalendarEventStore();
 calendarEventStore.$subscribe((mutation, state) => {
   // API call
-  calendarEventStore.fetchEvent().then(() => {
-    events.value = calendarEventStore.getFilteredCalendarEvents;
-  });
+  // calendarEventStore.fetchEvent().then(() => {
+  //   events.value = calendarEventStore.getFilteredCalendarEvents;
+  // });
 });
 
 // Calendar store & subscription
