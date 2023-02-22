@@ -259,7 +259,7 @@ const navigation = [
 const userNavigation = [
   { name: "Your Profile", href: "#" },
   { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
+  { name: "Log out", href: "/logout" },
 ];
 
 // Get calendar circle color
