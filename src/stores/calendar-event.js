@@ -38,13 +38,13 @@ export const useCalendarEventStore = defineStore("calendar-event", () => {
 
     await axios
       .post(
-          import.meta.env.VITE_API_DOMAIN + "/api/events?format=json",
-          event,
-          {
-            headers: {
-              'X-CSRFToken': this.$cookies.get('csrftoken')
-            }
-          }
+        import.meta.env.VITE_API_DOMAIN + "/api/events?format=json",
+        event,
+        {
+          headers: {
+            "X-CSRFToken": this.$cookies.get("csrftoken"),
+          },
+        }
       )
       .then((response) => {
         calendarEvent.value.push(newEventObj);

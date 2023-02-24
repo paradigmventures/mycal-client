@@ -141,18 +141,6 @@
     </div>
   </div>
 
-  <!-- use the modal component -->
-  <!-- <transition name="modal">
-    <Modal
-      v-if="modalShow"
-      @close-modal="closeModal"
-      @toggle-popover="togglePopover"
-      :day="modalDay"
-      :month="calendarStore.getMonth"
-      :year="calendarStore.getYear"
-      :events="modalEvents"
-    />
-  </transition> -->
   <div
     ref="eventListPopoverRef"
     :class="{ hidden: !pShow, block: pShow }"
@@ -202,10 +190,8 @@ const events = ref([]);
 // Calendar events store & subscription
 const calendarEventStore = useCalendarEventStore();
 calendarEventStore.$subscribe((mutation, state) => {
-  // API call
-  // calendarEventStore.fetchEvent().then(() => {
-  //   events.value = calendarEventStore.getFilteredCalendarEvents;
-  // });
+  // re populate calendar when new event gets added
+  events.value = calendarEventStore.getFilteredCalendarEvents;
 });
 
 // Calendar store & subscription
