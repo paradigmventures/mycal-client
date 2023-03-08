@@ -1,27 +1,11 @@
 <template>
-  <form
-    class="text-left w-full mt-10 mb-10 md:mb-0 space-y-3"
-    @submit.prevent="submit()"
-  >
+  <form class="w-full mt-10 mb-10 md:mb-0 space-y-3" @submit.prevent="submit()">
     <div>
-      <label for="calendar" class="block text-sm font-medium text-gray-700"
-        >Calendar</label
-      >
-      <div class="mt-1">
-        <select
-          v-model="form.calendar"
-          id="calendar"
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-        >
-          <option
-            v-for="calendar in calendarList"
-            :key="calendar.slug"
-            :value="calendar.slug"
-          >
-            {{ calendar.title }}
-          </option>
-        </select>
-      </div>
+      <SelectBox
+        :label="'Color'"
+        :label-class="'block text-sm font-medium text-gray-700'"
+        @color-changed="colorSelectionChanged"
+      />
     </div>
 
     <div>
@@ -30,53 +14,40 @@
       >
       <div class="mt-1">
         <input
-          id="title"
-          v-model="form.title"
           type="text"
-          required=""
+          v-model="form.title"
+          id="title"
           class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-        />
-      </div>
-    </div>
-
-    <div class="mt-1">
-      <label for="description" class="block text-sm font-medium text-gray-700"
-        >Description</label
-      >
-      <div>
-        <textarea
-          id="description"
-          v-model="form.description"
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-        ></textarea>
-      </div>
-    </div>
-
-    <div>
-      <label for="start_date" class="block text-sm font-medium text-gray-700"
-        >Start Date</label
-      >
-      <div class="mt-1">
-        <input
-          id="start_date"
-          v-model="form.start_dt"
-          type="datetime-local"
-          required=""
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+          required
         />
       </div>
     </div>
 
     <div>
-      <label for="end_date" class="block text-sm font-medium text-gray-700"
-        >End Date</label
+      <label for="slug" class="block text-sm font-medium text-gray-700"
+        >Slug</label
       >
       <div class="mt-1">
         <input
-          id="end_date"
-          v-model="form.end_dt"
-          type="datetime-local"
-          required=""
+          id="slug"
+          v-model="form.slug"
+          type="text"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+          required
+        />
+      </div>
+    </div>
+
+    <div>
+      <label for="order" class="block text-sm font-medium text-gray-700"
+        >Order
+        <span class="text-xs font-light text-gray-600">(optional)</span></label
+      >
+      <div class="mt-1">
+        <input
+          id="order"
+          v-model="form.order"
+          type="number"
           class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
         />
       </div>
@@ -97,6 +68,7 @@
 import { ref, reactive, onBeforeMount } from "vue";
 import { useCalendarListStore } from "../stores/calendar-list";
 import { useCalendarEventStore } from "../stores/calendar-event";
+import SelectBox from "./SelectBox.vue";
 
 // Store initialization and subscription
 const calendarListStore = useCalendarListStore();
@@ -116,6 +88,12 @@ const form = reactive({
   end_dt: null,
 });
 
+// listen for color selection change
+const colorSelectionChanged = (newColor) => {
+  console.log(newColor);
+};
+
+// submit form
 const submit = () => {
   calendarEventStore.addEvent(form).then(() => {
     emit("closeModal");

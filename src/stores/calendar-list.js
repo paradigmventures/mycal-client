@@ -21,7 +21,8 @@ export const useCalendarListStore = defineStore("calendar-list", () => {
 
   const fetchList = async () => {
     await axios
-      .get(import.meta.env.VITE_API_DOMAIN + "/api/calendars?format=json")
+      .get(import.meta.env.VITE_API_DOMAIN + "/calendars")
+      // .get(import.meta.env.VITE_API_DOMAIN + "/api/calendars?format=json")
       .then((response) => {
         calendarList.value = response.data;
 

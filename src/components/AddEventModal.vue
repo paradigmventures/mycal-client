@@ -31,17 +31,9 @@
             <DialogPanel
               class="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 text-left shadow-xl transition-all sm:mt-8 sm:w-full sm:max-w-lg sm:p-6"
             >
-              <div class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
-                <button
-                  type="button"
-                  class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  @click="$emit('closeModal')"
-                >
-                  <span class="sr-only">Close</span>
-                  <XMarkIcon class="h-6 w-6" aria-hidden="true" />
-                </button>
-              </div>
-              <div class="sm:flex sm:items-start">
+              <div
+                class="absolute top-0 w-full hidden pt-4 pr-10 sm:flex sm:justify-between sm:items-center"
+              >
                 <div
                   class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10"
                 >
@@ -56,10 +48,38 @@
                   <DialogTitle
                     as="h3"
                     class="text-lg font-medium leading-6 text-gray-900"
-                    >Add event</DialogTitle
+                    >{{ title }}</DialogTitle
+                  >
+                </div>
+                <button
+                  type="button"
+                  class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  @click="$emit('closeModal')"
+                >
+                  <span class="sr-only">Close</span>
+                  <XMarkIcon class="h-6 w-6" aria-hidden="true" />
+                </button>
+              </div>
+              <div class="sm:flex sm:items-start sm:mt-5">
+                <div
+                  class="mx-auto flex sm:hidden h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10"
+                >
+                  <PlusIcon
+                    class="h-6 w-6 text-indigo-600"
+                    aria-hidden="true"
+                  />
+                </div>
+                <div class="grow text-center sm:mt-0 sm:mx-4 sm:text-left">
+                  <DialogTitle
+                    as="h3"
+                    class="text-lg font-medium leading-6 text-gray-900 sm:hidden"
+                    >{{ title }}</DialogTitle
                   >
                   <div class="mt-2">
-                    <AddEventForm @close-modal="$emit('closeModal')" />
+                    <component
+                      :is="components[formComponentIndex]"
+                      @close-modal="$emit('closeModal')"
+                    />
                   </div>
                 </div>
               </div>
@@ -80,7 +100,11 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 import { PlusIcon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { ref } from "vue";
+import AddCalendarForm from "./AddCalendarForm.vue";
 import AddEventForm from "./AddEventForm.vue";
 
-defineProps({ open: Boolean });
+defineProps({ open: Boolean, title: String, formComponentIndex: Number });
+
+const components = [AddEventForm, AddCalendarForm];
 </script>

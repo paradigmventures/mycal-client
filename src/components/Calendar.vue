@@ -1,36 +1,28 @@
 <template>
-  <div class="lg:flex lg:h-full lg:flex-col bg-gray-100 border rounded-t-md">
-    <Top />
-
+  <div class="flex h-full flex-col bg-gray-100 border rounded-t-md">
     <div
-      class="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col"
+      class="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none"
     >
-      <div
-        class="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none"
-      >
-        <div v-for="day in daysOfTheWeek" class="bg-white py-2">
-          {{ day.substring(0, 1)
-          }}<span class="sr-only sm:not-sr-only">{{
-            day.substring(1, 3)
-          }}</span>
-        </div>
+      <div v-for="day in daysOfTheWeek" class="bg-white py-2">
+        {{ day.substring(0, 1)
+        }}<span class="sr-only sm:not-sr-only">{{ day.substring(1, 3) }}</span>
       </div>
-      <div
-        class="flex bg-gray-200 text-xs leading-6 text-gray-700 lg:flex-auto"
-      >
-        <div class="hidden w-full lg:grid lg:grid-cols-7 lg:gap-px">
-          <div
-            v-if="firstDayOfCurrentMonth > 0"
-            v-for="day in firstDayOfCurrentMonth"
-            :key="day"
-            :class="'lg:h-36 bg-gray-50 text-gray-500 relative py-2 px-3'"
-          ></div>
+    </div>
+    <div class="flex bg-gray-200 text-xs leading-6 text-gray-700 flex-auto">
+      <div class="w-full grid grid-cols-7 gap-px">
+        <div
+          v-if="firstDayOfCurrentMonth > 0"
+          v-for="day in firstDayOfCurrentMonth"
+          :key="day"
+          :class="'bg-gray-50 text-gray-500 relative py-2 px-3'"
+        ></div>
 
-          <div
-            v-for="day in daysInCurrentMonth"
-            :key="day"
-            :class="'lg:h-36 bg-white relative py-1 px-2'"
-          >
+        <div
+          v-for="day in daysInCurrentMonth"
+          :key="day"
+          :class="'w-full bg-white relative py-2 px-3'"
+        >
+          <div class="flex justify-center">
             <time
               :datetime="day.date"
               :class="
@@ -41,102 +33,51 @@
             >
               {{ day }}
             </time>
-            <ol v-if="maxThreeTodaysEvent(day, events).length" class="mt-1">
-              <li
-                v-for="evt in maxThreeTodaysEvent(day, events)"
-                :key="evt.id"
-                @click="togglePopover($event, evt)"
-                class="w-full mt-2 group flex cursor-pointer items-center rounded px-1 py-0.5 text-xs font-medium"
-                :class="[
-                  getContainerColor(evt.calendar),
-                  getTextColor(evt.calendar),
-                ]"
-              >
-                <span
-                  class="w-full flex whitespace-nowrap items-center overflow-x-hidden"
-                >
-                  <svg
-                    class="h-2 w-1/5"
-                    :class="[getCircleColor(evt.calendar)]"
-                    fill="currentColor"
-                    viewBox="0 0 8 8"
-                  >
-                    <circle cx="4" cy="4" r="3" />
-                  </svg>
-
-                  <span class="w-4/5">
-                    {{ evt.title }}
-                  </span>
-                </span>
-              </li>
-              <li
-                v-if="allTodaysEvent(day, events).length > 3"
-                class="mt-1 text-gray-500 cursor-pointer"
-                @click="tPopover($event, allTodaysEvent(day, events), day)"
-              >
-                + {{ allTodaysEvent(day, events).length - 3 }} more
-              </li>
-            </ol>
           </div>
-
-          <div
-            v-if="lastEmptyCells > 0"
-            v-for="day in lastEmptyCells"
-            :key="day"
-            :class="'lg:h-36 bg-gray-50 text-gray-500 relative py-2 px-3'"
-          ></div>
-        </div>
-
-        <div class="isolate grid w-full grid-cols-7 gap-px lg:hidden">
-          <div
-            v-if="firstDayOfCurrentMonth > 0"
-            v-for="day in firstDayOfCurrentMonth"
-            :key="day"
-            :class="'bg-gray-50'"
-          ></div>
-
-          <button
-            v-for="day in daysInCurrentMonth"
-            :key="day"
-            type="button"
-            :class="[
-              'bg-white',
-              isToday(day) ? 'font-semibold text-indigo-600' : 'text-gray-900',
-              'flex h-14 flex-col py-2 px-3 hover:bg-gray-100 focus:z-10',
-            ]"
-            @click="tPopover($event, allTodaysEvent(day, events), day)"
-          >
-            <time
-              :datetime="day.date"
+          <ol v-if="maxThreeTodaysEvent(day, events).length" class="mt-1">
+            <li
+              v-for="evt in maxThreeTodaysEvent(day, events)"
+              :key="evt.id"
+              @click="togglePopover($event, evt)"
+              class="w-full mt-2 group flex cursor-pointer items-center rounded px-1 py-0.5 text-xs font-medium"
               :class="[
-                isToday(day) ? 'bg-indigo-600 text-white' : '',
-                'flex h-6 w-6 items-center justify-center rounded-full',
-                'ml-auto',
+                getContainerColor(evt.calendar),
+                getTextColor(evt.calendar),
               ]"
-              >{{ day }}</time
-            >
-            <span class="sr-only"
-              >{{ allTodaysEvent(day, events).length }} events</span
-            >
-            <span
-              v-if="maxThreeTodaysEvent(day, events).length > 0"
-              class="-mx-0.5 mt-auto flex flex-wrap-reverse"
             >
               <span
-                v-for="evt in maxThreeTodaysEvent(day, events)"
-                :key="evt.id"
-                class="mx-0.5 mb-1 h-1.5 w-1.5 rounded-full bg-gray-400"
-              />
-            </span>
-          </button>
+                class="w-full flex whitespace-nowrap items-center overflow-x-hidden"
+              >
+                <svg
+                  class="h-2 w-1/5"
+                  :class="[getCircleColor(evt.calendar)]"
+                  fill="currentColor"
+                  viewBox="0 0 8 8"
+                >
+                  <circle cx="4" cy="4" r="3" />
+                </svg>
 
-          <div
-            v-if="lastEmptyCells > 0"
-            v-for="day in lastEmptyCells"
-            :key="day"
-            :class="'bg-gray-50 text-gray-500'"
-          ></div>
+                <span class="w-4/5">
+                  {{ evt.title }}
+                </span>
+              </span>
+            </li>
+            <li
+              v-if="allTodaysEvent(day, events).length > 3"
+              class="mt-1 text-gray-500 cursor-pointer"
+              @click="tPopover($event, allTodaysEvent(day, events), day)"
+            >
+              + {{ allTodaysEvent(day, events).length - 3 }} more
+            </li>
+          </ol>
         </div>
+
+        <div
+          v-if="lastEmptyCells > 0"
+          v-for="day in lastEmptyCells"
+          :key="day"
+          :class="' bg-gray-50 text-gray-500 relative py-2 px-3'"
+        ></div>
       </div>
     </div>
   </div>
@@ -173,7 +114,6 @@
 
 <script setup>
 import { ref, onMounted, onUpdated } from "vue";
-import Top from "@/components/Top.vue";
 import { useCalendarStore } from "../stores/calendar";
 import { useCalendarEventStore } from "../stores/calendar-event";
 import { useCalendarListStore } from "../stores/calendar-list";
@@ -206,14 +146,7 @@ calendarListStore.$subscribe((mutation, state) => {
   events.value = calendarEventStore.getFilteredCalendarEvents;
 });
 
-const {
-  containerColorTags,
-  checkboxColorTags,
-  labelColorTags,
-  getContainerColor,
-  getTextColor,
-  getCircleColor,
-} = useCalendarColor();
+const { getContainerColor, getTextColor, getCircleColor } = useCalendarColor();
 
 // component variables
 const daysOfTheWeek = {

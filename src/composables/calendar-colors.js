@@ -84,6 +84,78 @@ export function useCalendarColor() {
     rose: "text-rose-800",
   });
 
+  // would be needed when adding a new calendar
+  const addCalendarColors = ref([
+    {
+      key: "Red",
+      value: "red",
+    },
+    {
+      key: "Orange",
+      value: "orange",
+    },
+    {
+      key: "Amber",
+      value: "amber",
+    },
+    {
+      key: "Yellow",
+      value: "yellow",
+    },
+    {
+      key: "Lime",
+      value: "lime",
+    },
+    {
+      key: "Green",
+      value: "green",
+    },
+    {
+      key: "Emerald",
+      value: "emerald",
+    },
+    {
+      key: "Teal",
+      value: "teal",
+    },
+    {
+      key: "Cyan",
+      value: "cyan",
+    },
+    {
+      key: "Sky",
+      value: "sky",
+    },
+    {
+      key: "Blue",
+      value: "blue",
+    },
+    {
+      key: "Indigo",
+      value: "indigo",
+    },
+    {
+      key: "Violet",
+      value: "violet",
+    },
+    {
+      key: "Purple",
+      value: "purple",
+    },
+    {
+      key: "Fuchsia",
+      value: "fuchsia",
+    },
+    {
+      key: "Pink",
+      value: "pink",
+    },
+    {
+      key: "Rose",
+      value: "rose",
+    },
+  ]);
+
   // Calendar list store
   const calendarListStore = useCalendarListStore();
 
@@ -92,10 +164,11 @@ export function useCalendarColor() {
    * @param {string} calendarList The current calendar list
    */
   const getContainerColor = (calendarList) => {
+    if (!calendarListStore.getCalendarList.length) return;
+
     let listColor = calendarListStore.getCalendarList.filter(
       (list) => list.slug === calendarList
     );
-
     return containerColorTags.value[listColor[0].color];
   };
 
@@ -104,6 +177,8 @@ export function useCalendarColor() {
    * @param {string} calendarList The current calendar list
    */
   const getTextColor = (calendarList) => {
+    if (!calendarListStore.getCalendarList.length) return;
+
     let listColor = calendarListStore.getCalendarList.filter(
       (list) => list.slug === calendarList
     );
@@ -116,6 +191,8 @@ export function useCalendarColor() {
    * @param {string} calendarList The current calendar list
    */
   const getCircleColor = (calendarList) => {
+    if (!calendarListStore.getCalendarList.length) return;
+
     let listColor = calendarListStore.getCalendarList.filter(
       (list) => list.slug === calendarList
     );
@@ -128,6 +205,8 @@ export function useCalendarColor() {
    * @param {string} calendarList The current calendar list
    */
   const getBgColor = (calendarList) => {
+    if (!calendarListStore.getCalendarList.length) return;
+
     let listColor = calendarListStore.getCalendarList.filter(
       (list) => list.slug === calendarList
     );
@@ -137,6 +216,7 @@ export function useCalendarColor() {
 
   // expose managed state as return value
   return {
+    addCalendarColors,
     containerColorTags,
     checkboxColorTags,
     labelColorTags,
