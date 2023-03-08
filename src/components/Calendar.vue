@@ -256,7 +256,7 @@ const maxThreeTodaysEvent = (day, events) => {
   events.forEach((event) => {
     if (threeTodaysEventArr.length == 3) return threeTodaysEventArr;
 
-    if (isEventToday(day, event.start_dt)) {
+    if (isEventToday(day, event.start_date)) {
       threeTodaysEventArr.push(event);
     }
   });
@@ -277,7 +277,7 @@ const allTodaysEvent = (day, events) => {
 
   let todaysEvent = [];
   events.forEach((event) => {
-    if (isEventToday(day, event.start_dt)) {
+    if (isEventToday(day, event.start_date)) {
       todaysEvent.push(event);
     }
   });

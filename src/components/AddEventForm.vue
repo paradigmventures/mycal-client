@@ -59,7 +59,7 @@
       <div class="mt-1">
         <input
           id="start_date"
-          v-model="form.start_dt"
+          v-model="form.start_date"
           type="datetime-local"
           required=""
           class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
@@ -74,7 +74,7 @@
       <div class="mt-1">
         <input
           id="end_date"
-          v-model="form.end_dt"
+          v-model="form.end_date"
           type="datetime-local"
           required=""
           class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
@@ -112,8 +112,8 @@ const form = reactive({
   calendar: null,
   title: null,
   description: null,
-  start_dt: null,
-  end_dt: null,
+  start_date: null,
+  end_date: null,
 });
 
 const submit = () => {

@@ -18,25 +18,36 @@
 
       <!-- Brand text -->
       <h2
-        class="ml-2 md:ml-6 text-sm md:text-xl lg:text-2xl tracking-tight font-sans font-semibold md:font-black text-gray-600"
+        class="ml-2 md:ml-5 lg:ml-6 text-sm md:text-xl lg:text-2xl tracking-tight font-sans font-semibold md:font-black text-gray-600"
       >
         My Cal
       </h2>
       <!-- End brand text -->
 
       <!-- Date navigators -->
-      <CalendarNavigator class="ml-2 lg:ml-12" />
+      <CalendarNavigator class="ml-2 md:ml-8 lg:ml-12" />
       <!-- End date navigators -->
 
-      <!-- Current month & year notice -->
-      <h1
-        class="ml-2 lg:ml-8 text-xs md:text-base lg:text-lg font-semibold text-gray-700"
+      <!-- Datepicker -->
+      <Datepicker
+        v-model="date"
+        auto-apply
+        close-on-scroll
+        @update:modelValue="handleDate"
       >
-        <time datetime="2022-01"
-          >{{ monthStr }} {{ calendarStore.getYear }}</time
-        >
-      </h1>
-      <!-- End current month & year notice -->
+        <template #trigger>
+          <!-- Current month & year notice -->
+          <h1
+            class="ml-2 md:ml-6 lg:ml-8 text-xs md:text-base lg:text-lg font-semibold text-gray-700 cursor-pointer"
+          >
+            <time datetime="2022-01"
+              >{{ monthStr }} {{ calendarStore.getYear }}</time
+            >
+          </h1>
+          <!-- End current month & year notice -->
+        </template>
+      </Datepicker>
+      <!-- Datepicker -->
     </div>
 
     <!-- Right justified nav options -->
@@ -112,6 +123,8 @@ import CalendarNavigator from "./CalendarNavigator.vue";
 import { useCalendarStore } from "../stores/calendar";
 import { ref, onMounted } from "vue";
 import AddEventModal from "./AddEventModal.vue";
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 
 // calendar store init
 const calendarStore = useCalendarStore();
@@ -143,6 +156,17 @@ const initializeDatePicker = () => {
     calendarStore.getMonth,
     calendarStore.getDay
   );
+};
+
+/**
+ * Change date from the datepicker
+ * @param {Date} modelData The selected date from the datepicker
+ */
+const handleDate = (modelData) => {
+  date.value = modelData;
+
+  calendarStore.setMonth(date.value.getMonth());
+  calendarStore.setYear(date.value.getFullYear());
 };
 
 // user avatar dropdown items

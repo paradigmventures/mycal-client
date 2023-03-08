@@ -55,7 +55,9 @@
                     </h2>
                     <h4 class="text-xs md:text-sm text-gray-700">
                       {{
-                        new Date(props.eventDialogData.start_dt).toDateString()
+                        new Date(
+                          props.eventDialogData.start_date
+                        ).toDateString()
                       }}
                     </h4>
 

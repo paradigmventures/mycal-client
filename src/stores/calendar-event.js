@@ -33,8 +33,8 @@ export const useCalendarEventStore = defineStore("calendar-event", () => {
       calendar: event.calendar,
       title: event.title,
       description: event.description,
-      start_dt: event.start_dt + ":00Z",
-      end_dt: event.end_dt + ":00Z",
+      start_date: event.start_date + ":00Z",
+      end_date: event.end_date + ":00Z",
     };
 
     await axios
