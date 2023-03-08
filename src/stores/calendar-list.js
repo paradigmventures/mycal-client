@@ -34,8 +34,29 @@ export const useCalendarListStore = defineStore("calendar-list", () => {
       });
   };
 
+  const addCalendarList = async (data) => {
+    await axios
+      .post(
+        import.meta.env.VITE_API_DOMAIN + "/calendars",
+        // import.meta.env.VITE_API_DOMAIN + "/api/calendars",
+        data
+        // {
+        //   headers: {
+        //     "X-CSRFToken": this.$cookies.get("csrftoken"),
+        //   },
+        // }
+      )
+      .then((response) => {
+        calendarList.value.push(data);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+  };
+
   return {
     selectedList,
+    addCalendarList,
     fetchList,
     updateSelectedList,
     getCalendarList,

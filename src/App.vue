@@ -86,6 +86,15 @@
         </div>
       </main>
     </div>
+
+    <!-- Add calendar notification -->
+    <Notification
+      :title="'Done!'"
+      :body="'Calendar added successfully'"
+      :icon-code="0"
+      :show="notificationStore.getIfCalendarListNotificationIsOpen"
+      @close="notificationStore.setIfCalendarListNotificationIsOpen(false)"
+    />
   </div>
 </template>
 
@@ -97,15 +106,21 @@ import { useCalendarColor } from "./composables/calendar-colors.js";
 import { XMarkIcon } from "@heroicons/vue/24/outline";
 import TopNav from "./components/TopNav.vue";
 import { useCalendarListStore } from "./stores/calendar-list";
+import { useNotification } from "./stores/notification";
+import Notification from "./components/Notification.vue";
+import { useStorage } from "@vueuse/core";
 
 // Get calendar circle color
 const { getCircleColor } = useCalendarColor();
 
 // sidebar open/close state
-const isSidebarOpen = ref(false);
+// save in browser storage, so we can remember state of sidebabar if browser is refreshed
+const isSidebarOpen = useStorage("sidebarOpen", false);
 
 // Store initialization and subscription
 const calendarListStore = useCalendarListStore();
+// init notification store
+const notificationStore = useNotification();
 
 onMounted(() => {
   // Fetch calendar list

@@ -7,30 +7,30 @@
       <!-- Sidebar toggler -->
       <button
         type="button"
-        class="flex justify-center items-center h-9 w-9 lg:h-12 lg:w-12 text-gray-500 focus:bg-gray-200 hover:bg-gray-100 rounded-full"
+        class="flex justify-center items-center h-8 w-8 md:h-12 md:w-12 text-gray-500 focus:bg-gray-200 hover:bg-gray-100 rounded-full"
         @click="$emit('toggleSidebar')"
         title="Main menu"
       >
         <span class="sr-only">Open sidebar</span>
-        <Bars3Icon class="h-5 w-5 lg:h-6 lg:w-6" aria-hidden="true" />
+        <Bars3Icon class="h-4 w-4 md:h-6 md:w-6" aria-hidden="true" />
       </button>
       <!-- End sidebar toggler -->
 
       <!-- Brand text -->
       <h2
-        class="ml-3 lg:ml-6 text-xs md:textxl lg:text-2xl tracking-tight font-sans font-bold lg:font-black text-gray-600"
+        class="ml-2 md:ml-6 text-sm md:text-xl lg:text-2xl tracking-tight font-sans font-semibold md:font-black text-gray-600"
       >
         My Cal
       </h2>
       <!-- End brand text -->
 
       <!-- Date navigators -->
-      <CalendarNavigator class="ml-5 lg:ml-12" />
+      <CalendarNavigator class="ml-2 lg:ml-12" />
       <!-- End date navigators -->
 
       <!-- Current month & year notice -->
       <h1
-        class="ml-4 lg:ml-8 text-xs md:text-base lg:text-lg font-semibold text-gray-700"
+        class="ml-2 lg:ml-8 text-xs md:text-base lg:text-lg font-semibold text-gray-700"
       >
         <time datetime="2022-01"
           >{{ monthStr }} {{ calendarStore.getYear }}</time
@@ -44,13 +44,13 @@
       <div>
         <button
           type="button"
-          class="ml-4 lg:ml-6 rounded-md border border-transparent bg-indigo-600 py-1.5 px-2 lg:px-4 text-xs lg:text-sm lg:font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          class="ml-2 lg:ml-6 rounded-md border border-transparent bg-indigo-600 py-1.5 px-2 md:px-4 text-xs md:text-sm font-light md:font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           @click="isAddEventModalShowing = true"
         >
           Add event
         </button>
       </div>
-      <div class="ml-4 flex items-center md:ml-6">
+      <div class="ml-2 flex items-center md:ml-6">
         <!-- Profile dropdown -->
         <Menu as="div" class="relative ml-3">
           <div>
