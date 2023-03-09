@@ -21,8 +21,8 @@ export const useCalendarListStore = defineStore("calendar-list", () => {
 
   const fetchList = async () => {
     await axios
-      .get(import.meta.env.VITE_API_DOMAIN + "/calendars")
-      // .get(import.meta.env.VITE_API_DOMAIN + "/api/calendars?format=json")
+      // .get(import.meta.env.VITE_API_DOMAIN + "/calendars")
+      .get(import.meta.env.VITE_API_DOMAIN + "/api/calendars?format=json")
       .then((response) => {
         calendarList.value = response.data;
 
@@ -37,14 +37,14 @@ export const useCalendarListStore = defineStore("calendar-list", () => {
   const addCalendarList = async (data) => {
     await axios
       .post(
-        import.meta.env.VITE_API_DOMAIN + "/calendars",
-        // import.meta.env.VITE_API_DOMAIN + "/api/calendars",
-        data
-        // {
-        //   headers: {
-        //     "X-CSRFToken": this.$cookies.get("csrftoken"),
-        //   },
-        // }
+        // import.meta.env.VITE_API_DOMAIN + "/calendars",
+        import.meta.env.VITE_API_DOMAIN + "/api/calendars",
+        data,
+        {
+          headers: {
+            "X-CSRFToken": this.$cookies.get("csrftoken"),
+          },
+        }
       )
       .then((response) => {
         calendarList.value.push(data);
