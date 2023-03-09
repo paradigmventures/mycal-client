@@ -1,82 +1,87 @@
 <template>
-  <div class="flex h-full flex-col bg-gray-100 border rounded-t-md">
+  <div class="flex h-full flex-col bg-gray-100 border-t rounded-t-md">
     <div
-      class="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none"
+      class="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-medium leading-6 text-gray-700 lg:flex-none"
     >
-      <div v-for="day in daysOfTheWeek" class="bg-white py-2">
+      <div v-for="day in daysOfTheWeek" class="bg-white py-1">
         {{ day.substring(0, 1)
         }}<span class="sr-only sm:not-sr-only">{{ day.substring(1, 3) }}</span>
       </div>
     </div>
-    <div class="flex bg-gray-200 text-xs leading-6 text-gray-700 flex-auto">
-      <div class="w-full grid grid-cols-7 gap-px">
+    <div class="h-full w-full bg-gray-200 text-xs leading-6 text-gray-700">
+      <div class="h-full w-full flex flex-wrap">
         <div
           v-if="firstDayOfCurrentMonth > 0"
           v-for="day in firstDayOfCurrentMonth"
           :key="day"
-          :class="'bg-gray-50 text-gray-500 relative py-2 px-3'"
+          class="w-[14.2857%] bg-gray-50 border-r border-b"
+          :class="[getTotalGrid == 35 ? 'h-1/5' : 'h-1/6']"
         ></div>
 
         <div
           v-for="day in daysInCurrentMonth"
           :key="day"
-          :class="'w-full bg-white relative py-2 px-3'"
+          class="w-[14.2857%] bg-white border-r border-b p-1 overflow-hidden"
+          :class="[getTotalGrid == 35 ? 'h-1/5' : 'h-1/6']"
         >
-          <div class="flex justify-center">
-            <time
-              :datetime="day.date"
-              :class="
-                isToday(day)
-                  ? 'flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white'
-                  : undefined
-              "
-            >
-              {{ day }}
-            </time>
-          </div>
-          <ol v-if="maxThreeTodaysEvent(day, events).length" class="mt-1">
-            <li
-              v-for="evt in maxThreeTodaysEvent(day, events)"
-              :key="evt.id"
-              @click="togglePopover($event, evt)"
-              class="w-full mt-2 group flex cursor-pointer items-center rounded px-1 py-0.5 text-xs font-medium"
-              :class="[
-                getContainerColor(evt.calendar),
-                getTextColor(evt.calendar),
-              ]"
-            >
-              <span
-                class="w-full flex whitespace-nowrap items-center overflow-x-hidden"
+          <div class="flex flex-col flex-1">
+            <div class="flex justify-center">
+              <time
+                :datetime="day.date"
+                :class="
+                  isToday(day)
+                    ? 'flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white'
+                    : undefined
+                "
               >
-                <svg
-                  class="h-2 w-1/5"
-                  :class="[getCircleColor(evt.calendar)]"
-                  fill="currentColor"
-                  viewBox="0 0 8 8"
+                {{ day }}
+              </time>
+            </div>
+            <ol v-if="maxTwoTodaysEvent(day, events).length" class="mt-0.5">
+              <li
+                v-for="evt in maxTwoTodaysEvent(day, events)"
+                :key="evt.id"
+                @click="togglePopover($event, evt)"
+                class="w-full mt-0.5 group flex cursor-pointer items-center rounded py-0 px-1 text-[10.5px] font-medium"
+                :class="[
+                  getContainerColor(evt.calendar),
+                  getTextColor(evt.calendar),
+                ]"
+              >
+                <span
+                  class="w-full flex whitespace-nowrap items-center overflow-x-hidden"
                 >
-                  <circle cx="4" cy="4" r="3" />
-                </svg>
+                  <svg
+                    class="h-2 w-1/5"
+                    :class="[getCircleColor(evt.calendar)]"
+                    fill="currentColor"
+                    viewBox="0 0 8 8"
+                  >
+                    <circle cx="4" cy="4" r="3" />
+                  </svg>
 
-                <span class="w-4/5">
-                  {{ evt.title }}
+                  <span class="w-4/5">
+                    {{ evt.title }}
+                  </span>
                 </span>
-              </span>
-            </li>
-            <li
-              v-if="allTodaysEvent(day, events).length > 3"
-              class="mt-1 text-gray-500 cursor-pointer"
-              @click="tPopover($event, allTodaysEvent(day, events), day)"
-            >
-              + {{ allTodaysEvent(day, events).length - 3 }} more
-            </li>
-          </ol>
+              </li>
+              <li
+                v-if="allTodaysEvent(day, events).length > 2"
+                class="mt-1 text-gray-500 cursor-pointer"
+                @click="tPopover($event, allTodaysEvent(day, events), day)"
+              >
+                + {{ allTodaysEvent(day, events).length - 2 }} more
+              </li>
+            </ol>
+          </div>
         </div>
 
         <div
           v-if="lastEmptyCells > 0"
           v-for="day in lastEmptyCells"
           :key="day"
-          :class="' bg-gray-50 text-gray-500 relative py-2 px-3'"
+          class="w-[14.2857%] bg-gray-50 border-r border-b"
+          :class="[getTotalGrid == 35 ? 'h-1/5' : 'h-1/6']"
         ></div>
       </div>
     </div>
@@ -113,7 +118,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUpdated } from "vue";
+import { ref, computed, onMounted, onUpdated } from "vue";
 import { useCalendarStore } from "../stores/calendar";
 import { useCalendarEventStore } from "../stores/calendar-event";
 import { useCalendarListStore } from "../stores/calendar-list";
@@ -204,6 +209,13 @@ const lastCalendarCells = () => {
 };
 
 /**
+ * Gets the total grid present in the calendar
+ */
+const getTotalGrid = computed(() =>
+  firstDayOfCurrentMonth.value <= 5 ? 35 : 42
+);
+
+/**
  * Validates a day to check if it's today or not
  *
  * @param {number} day The day to validate
@@ -240,7 +252,7 @@ const isEventToday = (day, startdate) => {
 };
 
 /**
- * Gets at most, 3 calendar events on a given day
+ * Gets at most, 2 calendar events on a given day
  * This events are displayed on the calendar grid (>= Large screens)
  *
  * @param {number} day calendar month day whose event(s) we're getting
@@ -248,20 +260,20 @@ const isEventToday = (day, startdate) => {
  *
  * @return array Array of the filtered day's event(s)
  */
-const maxThreeTodaysEvent = (day, events) => {
+const maxTwoTodaysEvent = (day, events) => {
   if (!events.length) return [];
 
-  let threeTodaysEventArr = [];
+  let twoTodaysEventArr = [];
 
-  events.forEach((event) => {
-    if (threeTodaysEventArr.length == 3) return threeTodaysEventArr;
+  for (let event of events) {
+    if (twoTodaysEventArr.length == 2) break;
 
     if (isEventToday(day, event.start_date)) {
-      threeTodaysEventArr.push(event);
+      twoTodaysEventArr.push(event);
     }
-  });
+  }
 
-  return threeTodaysEventArr;
+  return twoTodaysEventArr;
 };
 
 /**

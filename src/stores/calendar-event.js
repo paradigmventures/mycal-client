@@ -20,8 +20,8 @@ export const useCalendarEventStore = defineStore("calendar-event", () => {
 
   const fetchEvent = async () => {
     await axios
-      // .get(import.meta.env.VITE_API_DOMAIN + "/events")
-      .get(import.meta.env.VITE_API_DOMAIN + "/api/events?format=json")
+      .get(import.meta.env.VITE_API_DOMAIN + "/events")
+      // .get(import.meta.env.VITE_API_DOMAIN + "/api/events?format=json")
       .then((response) => {
         calendarEvent.value = response.data;
       });
@@ -39,14 +39,14 @@ export const useCalendarEventStore = defineStore("calendar-event", () => {
 
     await axios
       .post(
-        // import.meta.env.VITE_API_DOMAIN + "/events",
-        import.meta.env.VITE_API_DOMAIN + "/api/events?format=json",
-        event,
-        {
-          headers: {
-            "X-CSRFToken": this.$cookies.get("csrftoken"),
-          },
-        }
+        import.meta.env.VITE_API_DOMAIN + "/events",
+        // import.meta.env.VITE_API_DOMAIN + "/api/events?format=json",
+        event
+        // {
+        //   headers: {
+        //     "X-CSRFToken": this.$cookies.get("csrftoken"),
+        //   },
+        // }
       )
       .then((response) => {
         calendarEvent.value.push(newEventObj);

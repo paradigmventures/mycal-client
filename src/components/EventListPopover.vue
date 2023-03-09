@@ -26,10 +26,10 @@
           :class="[getBgColor(evt.calendar), getTextColor(evt.calendar)]"
           @click="$emit('togglePopover', $event, evt)"
         >
-          <span v-if="largerThanMd && index > 2" class="w-4 rounded-l-md" />
+          <span v-if="largerThanMd && index > 1" class="w-4 rounded-l-md" />
           <span v-else-if="!largerThanMd" class="w-4 rounded-l-md" />
           <span
-            v-if="largerThanMd && index > 2"
+            v-if="largerThanMd && index > 1"
             class="h-full w-full px-2 py-1 text-sm font-normal"
             :class="[getContainerColor(evt.calendar)]"
             >{{ evt.title }}</span
