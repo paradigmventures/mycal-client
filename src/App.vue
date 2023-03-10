@@ -61,8 +61,12 @@
                       }}
                     </h4>
 
+                    <p class="mt-5 mb-2 text-sm text-gray-700">
+                      {{ props.eventDialogData.description }}
+                    </p>
+
                     <h4
-                      class="mt-3 mb-5 w-full flex space-x-2 justify-start whitespace-nowrap items-center"
+                      class="my-3 w-full flex space-x-2 justify-start whitespace-nowrap items-center"
                     >
                       <svg
                         class="h-2"

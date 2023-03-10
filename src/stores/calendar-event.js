@@ -20,36 +20,27 @@ export const useCalendarEventStore = defineStore("calendar-event", () => {
 
   const fetchEvent = async () => {
     await axios
-      // .get(import.meta.env.VITE_API_DOMAIN + "/events")
-      .get(import.meta.env.VITE_API_DOMAIN + "/api/events?format=json")
+      .get(import.meta.env.VITE_API_DOMAIN + "/events")
+      // .get(import.meta.env.VITE_API_DOMAIN + "/api/events?format=json")
       .then((response) => {
         calendarEvent.value = response.data;
       });
   };
 
   const addEvent = async (event) => {
-    // construct a new event object
-    let newEventObj = {
-      calendar: event.calendar,
-      title: event.title,
-      description: event.description,
-      start_date: event.start_date + ":00Z",
-      end_date: event.end_date + ":00Z",
-    };
-
     await axios
       .post(
-        // import.meta.env.VITE_API_DOMAIN + "/events",
-        import.meta.env.VITE_API_DOMAIN + "/api/events?format=json",
-        event,
-        {
-          headers: {
-            "X-CSRFToken": this.$cookies.get("csrftoken"),
-          },
-        }
+        import.meta.env.VITE_API_DOMAIN + "/events",
+        // import.meta.env.VITE_API_DOMAIN + "/api/events?format=json",
+        event
+        // {
+        //   headers: {
+        //     "X-CSRFToken": this.$cookies.get("csrftoken"),
+        //   },
+        // }
       )
       .then((response) => {
-        calendarEvent.value.push(newEventObj);
+        calendarEvent.value.push(event);
       })
       .catch((err) => {
         console.log(err.response.data);

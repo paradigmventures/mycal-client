@@ -5,7 +5,7 @@
       @submit.prevent="submit()"
     >
       <div>
-        <SelectBox
+        <SelectColorBox
           :label="'Color'"
           :label-class="'block text-sm font-medium text-gray-700'"
           @color-changed="colorSelectionChanged"
@@ -82,7 +82,7 @@ import { ref, reactive, onBeforeMount } from "vue";
 import { useCalendarColor } from "../composables/calendar-colors";
 import { useCalendarListStore } from "../stores/calendar-list";
 import { useNotification } from "../stores/notification";
-import SelectBox from "./SelectBox.vue";
+import SelectColorBox from "./SelectColorBox.vue";
 
 // init calendar color composable
 const { addCalendarColors } = useCalendarColor();
@@ -93,9 +93,6 @@ const notificationStore = useNotification();
 
 // component event definition
 const emit = defineEmits(["closeModal"]);
-
-// notification state
-const isNotificationOpen = ref(false);
 
 // form data
 const form = reactive({
@@ -125,11 +122,11 @@ const submit = () => {
   if (form.slug.trim() == "" || form.slug == null)
     return (slugError.value = "This field is invalid");
 
-  // show success notification
-  notificationStore.setIfCalendarListNotificationIsOpen(true);
-
   // close modal
   calendarListStore.addCalendarList(form).then(() => {
+    // show success notification
+    notificationStore.setIfCalendarListNotificationIsOpen(true);
+
     emit("closeModal");
   });
 
