@@ -40,7 +40,26 @@ export const useCalendarEventStore = defineStore("calendar-event", () => {
         // }
       )
       .then((response) => {
-        calendarEvent.value.push(event);
+        fetchEvent();
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+  };
+
+  const deleteEvent = async (uuid) => {
+    await axios
+      .delete(
+        import.meta.env.VITE_API_DOMAIN + "/events/" + uuid
+        // import.meta.env.VITE_API_DOMAIN + "/api/events/"+uuid,
+        // {
+        //   headers: {
+        //     "X-CSRFToken": this.$cookies.get("csrftoken"),
+        //   },
+        // }
+      )
+      .then((response) => {
+        fetchEvent();
       })
       .catch((err) => {
         console.log(err.response.data);
@@ -50,6 +69,7 @@ export const useCalendarEventStore = defineStore("calendar-event", () => {
   return {
     fetchEvent,
     addEvent,
+    deleteEvent,
     calendarEvent,
     getFilteredCalendarEvents,
     getCalendarEvent,

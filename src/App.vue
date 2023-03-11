@@ -29,7 +29,7 @@
         :class="[isSidebarOpen ? 'ml-[50%] md:ml-[25%] lg:ml-[22%]' : 'ml-0']"
       >
         <div class="flex-1 block">
-          <!-- begin calendar //-->
+          <!-- begin calendar -->
           <Calendar>
             <template #eventDialog="props">
               <div
@@ -37,9 +37,21 @@
               >
                 <div class="col-span-2" />
                 <div>
-                  <div class="flex justify-end space-x-1 items-center">
+                  <div class="flex justify-end space-x-2 items-center">
+                    <!-- Edit icon -->
+                    <PencilSquareIcon
+                      class="w-5 h-5 cursor-pointer text-gray-700 hover:text-black transition-colors"
+                    />
+
+                    <!-- Delete icon -->
+                    <TrashIcon
+                      class="w-5 h-5 cursor-pointer text-gray-700 hover:text-black transition-colors"
+                      @click="isDeleteConfirmationModalOpen = true"
+                    />
+
+                    <!-- Close popover icon -->
                     <XMarkIcon
-                      class="w-4 h-4 cursor-pointer text-gray-700 hover:text-black transition-colors"
+                      class="w-5 h-5 cursor-pointer text-gray-700 hover:text-black transition-colors"
                       @click="props.closeEventDialog"
                     />
                   </div>
@@ -86,9 +98,23 @@
                   </div>
                 </div>
               </div>
+
+              <!-- confirm delete event modal -->
+              <ConfirmModal
+                :open="isDeleteConfirmationModalOpen"
+                :title="'Delete event'"
+                :body="'Are you sure you want to delete this event? All event data will be permanently removed. This action cannot be undone.'"
+                @confirmed="
+                  deleteEvent(
+                    props.eventDialogData.uuid,
+                    props.closeEventDialog
+                  )
+                "
+                @cancelled="isDeleteConfirmationModalOpen = false"
+              />
             </template>
           </Calendar>
-          <!-- /End calendar -->
+          <!-- end calendar -->
         </div>
       </main>
     </div>
@@ -109,12 +135,18 @@ import { ref, onMounted } from "vue";
 import Calendar from "./components/Calendar.vue";
 import Sidebar from "./components/Sidebar.vue";
 import { useCalendarColor } from "./composables/calendar-colors.js";
-import { XMarkIcon } from "@heroicons/vue/24/outline";
+import {
+  PencilSquareIcon,
+  TrashIcon,
+  XMarkIcon,
+} from "@heroicons/vue/24/outline";
 import TopNav from "./components/TopNav.vue";
 import { useCalendarListStore } from "./stores/calendar-list";
+import { useCalendarEventStore } from "./stores/calendar-event";
 import { useNotification } from "./stores/notification";
 import Notification from "./components/Notification.vue";
 import { useStorage } from "@vueuse/core";
+import ConfirmModal from "./components/ConfirmModal.vue";
 
 // Get calendar circle color
 const { getCircleColor } = useCalendarColor();
@@ -125,8 +157,27 @@ const isSidebarOpen = useStorage("sidebarOpen", false);
 
 // Store initialization and subscription
 const calendarListStore = useCalendarListStore();
-// init notification store
+const calendarEventStore = useCalendarEventStore();
 const notificationStore = useNotification();
+
+// confirm delete modal state
+const isDeleteConfirmationModalOpen = ref(false);
+
+// process delete action
+const deleteEvent = (uuid, closeEventDialog) => {
+  calendarEventStore.deleteEvent(uuid).then(() => {
+    //close popover
+    closeEventDialog();
+    // close confirm modal
+    isDeleteConfirmationModalOpen.value = false;
+
+    // show success notification and close after 2 seconds
+    notificationStore.setIfCalendarListNotificationIsOpen(true);
+    setTimeout(() => {
+      notificationStore.setIfCalendarListNotificationIsOpen(false);
+    }, 2000);
+  });
+};
 
 onMounted(() => {
   // Fetch calendar list
