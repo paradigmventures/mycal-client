@@ -82,14 +82,14 @@
         type="submit"
         class="inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:indigo-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
       >
-        Add event
+        {{ eventUpdateData == null ? "Add event" : "Update event" }}
       </button>
     </div>
   </form>
 </template>
 
 <script setup>
-import { ref, reactive, onBeforeMount } from "vue";
+import { ref, reactive, onBeforeMount, inject } from "vue";
 import { useCalendarListStore } from "../stores/calendar-list";
 import { useCalendarEventStore } from "../stores/calendar-event";
 import { useNotification } from "../stores/notification";
@@ -103,8 +103,12 @@ const notificationStore = useNotification();
 
 // component event definition
 const emit = defineEmits(["closeModal"]);
-
+// calendar list initial state.
+// to be populated on mounted
 const calendarList = ref([]);
+
+// get injected form data(for event update) if any
+const eventUpdateData = inject("eventData");
 
 // form data
 const form = reactive({
@@ -131,16 +135,36 @@ const submit = () => {
   if (form.description.trim() == "" || form.description == null)
     return (descriptionError.value = "This field is invalid");
 
-  calendarEventStore.addEvent(form).then(() => {
-    // show success notification
-    notificationStore.setIfCalendarListNotificationIsOpen(true);
+  // if eventUpdateData wasn't injected, we need a create event action, else we need an update event action
+  if (eventUpdateData.value == null) {
+    // create event action
+    calendarEventStore.addEvent(form).then(() => {
+      // show success notification
+      notificationStore.setIfCalendarListNotificationIsOpen(
+        true,
+        "Event added successfully!"
+      );
 
-    emit("closeModal");
-  });
+      emit("closeModal");
+    });
+  } else {
+    // update event action
+    calendarEventStore
+      .updateEvent(eventUpdateData.value.uuid, form)
+      .then(() => {
+        // show success notification
+        notificationStore.setIfCalendarListNotificationIsOpen(
+          true,
+          "Event updated successfully!"
+        );
+
+        emit("closeModal");
+      });
+  }
 
   // close success notification after 2 secs
   setTimeout(() => {
-    notificationStore.setIfCalendarListNotificationIsOpen(false);
+    notificationStore.setIfCalendarListNotificationIsOpen(false, null);
   }, 2000);
 };
 
@@ -149,6 +173,12 @@ onBeforeMount(() => {
   calendarListStore.fetchList();
   calendarList.value = calendarListStore.getCalendarList;
 
-  form.calendar = calendarList.value[0].slug;
+  // Determine if we using this component to update an already existing event or creating a new one.
+  if (eventUpdateData.value != null) {
+    form.title = eventUpdateData.value.title;
+    form.description = eventUpdateData.value.description;
+    form.start_date = eventUpdateData.value.start_date;
+    form.end_date = eventUpdateData.value.end_date;
+  }
 });
 </script>

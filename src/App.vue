@@ -41,6 +41,7 @@
                     <!-- Edit icon -->
                     <PencilSquareIcon
                       class="w-5 h-5 cursor-pointer text-gray-700 hover:text-black transition-colors"
+                      @click="updateEvent(props.eventDialogData)"
                     />
 
                     <!-- Delete icon -->
@@ -122,16 +123,26 @@
     <!-- Add calendar notification -->
     <Notification
       :title="'Done!'"
-      :body="'Calendar added successfully'"
+      :body="notificationStore.getCalendarNotificationMessage"
       :icon-code="0"
       :show="notificationStore.getIfCalendarListNotificationIsOpen"
-      @close="notificationStore.setIfCalendarListNotificationIsOpen(false)"
+      @close="
+        notificationStore.setIfCalendarListNotificationIsOpen(false, null)
+      "
+    />
+
+    <!-- Modify event modal (we are reusing the add event modal here, so ignore component name) -->
+    <AddEventModal
+      :open="isUpdateModalShowing"
+      :title="'Update event'"
+      :form-component-index="0"
+      @close-modal="isUpdateModalShowing = false"
     />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, watch, onMounted, provide } from "vue";
 import Calendar from "./components/Calendar.vue";
 import Sidebar from "./components/Sidebar.vue";
 import { useCalendarColor } from "./composables/calendar-colors.js";
@@ -147,6 +158,7 @@ import { useNotification } from "./stores/notification";
 import Notification from "./components/Notification.vue";
 import { useStorage } from "@vueuse/core";
 import ConfirmModal from "./components/ConfirmModal.vue";
+import AddEventModal from "./components/AddEventModal.vue";
 
 // Get calendar circle color
 const { getCircleColor } = useCalendarColor();
@@ -159,11 +171,33 @@ const isSidebarOpen = useStorage("sidebarOpen", false);
 const calendarListStore = useCalendarListStore();
 const calendarEventStore = useCalendarEventStore();
 const notificationStore = useNotification();
-
 // confirm delete modal state
 const isDeleteConfirmationModalOpen = ref(false);
+// event data for modification
+// this will get populated on clicking the event's popover edit icon
+const eventDataForUpdate = ref(null);
+// update modal state
+const isUpdateModalShowing = ref(false);
 
-// process delete action
+// provide event data for modification to deep child
+// in this case: AddEventForm.vue & SelectCalendarBox.vue
+provide("eventData", eventDataForUpdate);
+
+const updateEvent = (eventData) => {
+  eventDataForUpdate.value = eventData;
+  isUpdateModalShowing.value = true;
+};
+
+// watch update modal state so we can discard provided data once it closes
+watch(isUpdateModalShowing, (val) => {
+  if (val == false) eventDataForUpdate.value = null;
+});
+
+/**
+ * Delete an event
+ * @param {Number} uuid The events unique ID
+ * @param {Function} closeEventDialog The function responsible for closing the popover
+ */
 const deleteEvent = (uuid, closeEventDialog) => {
   calendarEventStore.deleteEvent(uuid).then(() => {
     //close popover
@@ -172,9 +206,12 @@ const deleteEvent = (uuid, closeEventDialog) => {
     isDeleteConfirmationModalOpen.value = false;
 
     // show success notification and close after 2 seconds
-    notificationStore.setIfCalendarListNotificationIsOpen(true);
+    notificationStore.setIfCalendarListNotificationIsOpen(
+      true,
+      "Event deleted successfully"
+    );
     setTimeout(() => {
-      notificationStore.setIfCalendarListNotificationIsOpen(false);
+      notificationStore.setIfCalendarListNotificationIsOpen(false, null);
     }, 2000);
   });
 };

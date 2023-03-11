@@ -125,14 +125,17 @@ const submit = () => {
   // close modal
   calendarListStore.addCalendarList(form).then(() => {
     // show success notification
-    notificationStore.setIfCalendarListNotificationIsOpen(true);
+    notificationStore.setIfCalendarListNotificationIsOpen(
+      true,
+      "Calendar added successfully!"
+    );
 
     emit("closeModal");
   });
 
   // close success notification after 2 secs
   setTimeout(() => {
-    notificationStore.setIfCalendarListNotificationIsOpen(false);
+    notificationStore.setIfCalendarListNotificationIsOpen(false, null);
   }, 2000);
 };
 

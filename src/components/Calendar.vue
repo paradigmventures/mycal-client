@@ -135,6 +135,10 @@ const events = ref([]);
 // Calendar events store & subscription
 const calendarEventStore = useCalendarEventStore();
 calendarEventStore.$subscribe((mutation, state) => {
+  // close all open popovers
+  pShow.value = false;
+  popoverShow.value = false;
+
   // re populate calendar when new event gets added
   events.value = calendarEventStore.getFilteredCalendarEvents;
 });

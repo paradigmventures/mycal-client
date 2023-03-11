@@ -74,7 +74,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onBeforeMount } from "vue";
+import { ref, watch, inject, onBeforeMount } from "vue";
 import {
   Listbox,
   ListboxButton,
@@ -89,15 +89,21 @@ import { useCalendarListStore } from "../stores/calendar-list";
 // ini calendar colors composable
 const { bgColorTags } = useCalendarColor();
 
-defineProps({
+const props = defineProps({
   label: String,
   labelClass: String,
   fieldClass: String,
-  formComponentIndex: Number,
+  selected: {
+    required: false,
+    default: null,
+  },
 });
 
 // default selected
 const selected = ref(null);
+// get injected form data(for event update) if any
+// so we get the selected option from update data
+const eventUpdateData = inject("eventData");
 
 // define emit for passing selected color on selection change
 const emit = defineEmits(["calendarChanged"]);
@@ -111,12 +117,21 @@ watch(selected, (newSelection) => {
 const calendarListStore = useCalendarListStore();
 const calendarList = ref([]);
 
+const getCalendarObjectFromSlug = (slug) => {
+  let objArr = calendarList.value.filter((calendar) => calendar.slug == slug);
+
+  return objArr[0];
+};
+
 onBeforeMount(() => {
   // Fetch calendar list
   calendarListStore.fetchList();
   calendarList.value = calendarListStore.getCalendarList;
 
   // select first value in array by default
-  selected.value = calendarList.value[0];
+  selected.value =
+    eventUpdateData.value != null
+      ? getCalendarObjectFromSlug(eventUpdateData.value.calendar)
+      : calendarList.value[0];
 });
 </script>
