@@ -59,8 +59,8 @@ export const useCalendarEventStore = defineStore("calendar-event", () => {
    */
   const fetchEvent = async () => {
     await axios
-      .get(import.meta.env.VITE_API_DOMAIN + "/events")
-      // .get(import.meta.env.VITE_API_DOMAIN + "/api/events?format=json")
+      // .get(import.meta.env.VITE_API_DOMAIN + "/events")
+      .get(import.meta.env.VITE_API_DOMAIN + "/api/events?format=json")
       .then((response) => {
         calendarEvent.value = response.data;
       });
