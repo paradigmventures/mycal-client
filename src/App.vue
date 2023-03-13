@@ -29,7 +29,7 @@
         :class="[isSidebarOpen ? 'ml-[50%] md:ml-[25%] lg:ml-[22%]' : 'ml-0']"
       >
         <div class="flex-1 block">
-          <!-- begin calendar //-->
+          <!-- begin calendar -->
           <Calendar>
             <template #eventDialog="props">
               <div
@@ -37,9 +37,22 @@
               >
                 <div class="col-span-2" />
                 <div>
-                  <div class="flex justify-end space-x-1 items-center">
+                  <div class="flex justify-end space-x-2 items-center">
+                    <!-- Edit icon -->
+                    <PencilSquareIcon
+                      class="w-5 h-5 cursor-pointer text-gray-700 hover:text-black transition-colors"
+                      @click="updateEvent(props.eventDialogData)"
+                    />
+
+                    <!-- Delete icon -->
+                    <TrashIcon
+                      class="w-5 h-5 cursor-pointer text-gray-700 hover:text-black transition-colors"
+                      @click="isDeleteConfirmationModalOpen = true"
+                    />
+
+                    <!-- Close popover icon -->
                     <XMarkIcon
-                      class="w-4 h-4 cursor-pointer text-gray-700 hover:text-black transition-colors"
+                      class="w-5 h-5 cursor-pointer text-gray-700 hover:text-black transition-colors"
                       @click="props.closeEventDialog"
                     />
                   </div>
@@ -61,8 +74,12 @@
                       }}
                     </h4>
 
+                    <p class="mt-5 mb-2 text-sm text-gray-700">
+                      {{ props.eventDialogData.description }}
+                    </p>
+
                     <h4
-                      class="mt-3 mb-5 w-full flex space-x-2 justify-start whitespace-nowrap items-center"
+                      class="my-3 w-full flex space-x-2 justify-start whitespace-nowrap items-center"
                     >
                       <svg
                         class="h-2"
@@ -82,9 +99,23 @@
                   </div>
                 </div>
               </div>
+
+              <!-- confirm delete event modal -->
+              <ConfirmModal
+                :open="isDeleteConfirmationModalOpen"
+                :title="'Delete event'"
+                :body="'Are you sure you want to delete this event? All event data will be permanently removed. This action cannot be undone.'"
+                @confirmed="
+                  deleteEvent(
+                    props.eventDialogData.uuid,
+                    props.closeEventDialog
+                  )
+                "
+                @cancelled="isDeleteConfirmationModalOpen = false"
+              />
             </template>
           </Calendar>
-          <!-- /End calendar -->
+          <!-- end calendar -->
         </div>
       </main>
     </div>
@@ -92,25 +123,42 @@
     <!-- Add calendar notification -->
     <Notification
       :title="'Done!'"
-      :body="'Calendar added successfully'"
+      :body="notificationStore.getCalendarNotificationMessage"
       :icon-code="0"
       :show="notificationStore.getIfCalendarListNotificationIsOpen"
-      @close="notificationStore.setIfCalendarListNotificationIsOpen(false)"
+      @close="
+        notificationStore.setIfCalendarListNotificationIsOpen(false, null)
+      "
+    />
+
+    <!-- Modify event modal (we are reusing the add event modal here, so ignore component name) -->
+    <AddEventModal
+      :open="isUpdateModalShowing"
+      :title="'Update event'"
+      :form-component-index="0"
+      @close-modal="isUpdateModalShowing = false"
     />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, watch, onMounted, provide } from "vue";
 import Calendar from "./components/Calendar.vue";
 import Sidebar from "./components/Sidebar.vue";
 import { useCalendarColor } from "./composables/calendar-colors.js";
-import { XMarkIcon } from "@heroicons/vue/24/outline";
+import {
+  PencilSquareIcon,
+  TrashIcon,
+  XMarkIcon,
+} from "@heroicons/vue/24/outline";
 import TopNav from "./components/TopNav.vue";
 import { useCalendarListStore } from "./stores/calendar-list";
+import { useCalendarEventStore } from "./stores/calendar-event";
 import { useNotification } from "./stores/notification";
 import Notification from "./components/Notification.vue";
 import { useStorage } from "@vueuse/core";
+import ConfirmModal from "./components/ConfirmModal.vue";
+import AddEventModal from "./components/AddEventModal.vue";
 
 // Get calendar circle color
 const { getCircleColor } = useCalendarColor();
@@ -121,8 +169,52 @@ const isSidebarOpen = useStorage("sidebarOpen", false);
 
 // Store initialization and subscription
 const calendarListStore = useCalendarListStore();
-// init notification store
+const calendarEventStore = useCalendarEventStore();
 const notificationStore = useNotification();
+// confirm delete modal state
+const isDeleteConfirmationModalOpen = ref(false);
+// event data for modification
+// this will get populated on clicking the event's popover edit icon
+const eventDataForUpdate = ref(null);
+// update modal state
+const isUpdateModalShowing = ref(false);
+
+// provide event data for modification to deep child
+// in this case: AddEventForm.vue & SelectCalendarBox.vue
+provide("eventData", eventDataForUpdate);
+
+const updateEvent = (eventData) => {
+  eventDataForUpdate.value = eventData;
+  isUpdateModalShowing.value = true;
+};
+
+// watch update modal state so we can discard provided data once it closes
+watch(isUpdateModalShowing, (val) => {
+  if (val == false) eventDataForUpdate.value = null;
+});
+
+/**
+ * Delete an event
+ * @param {Number} uuid The events unique ID
+ * @param {Function} closeEventDialog The function responsible for closing the popover
+ */
+const deleteEvent = (uuid, closeEventDialog) => {
+  calendarEventStore.deleteEvent(uuid).then(() => {
+    //close popover
+    closeEventDialog();
+    // close confirm modal
+    isDeleteConfirmationModalOpen.value = false;
+
+    // show success notification and close after 2 seconds
+    notificationStore.setIfCalendarListNotificationIsOpen(
+      true,
+      "Event deleted successfully"
+    );
+    setTimeout(() => {
+      notificationStore.setIfCalendarListNotificationIsOpen(false, null);
+    }, 2000);
+  });
+};
 
 onMounted(() => {
   // Fetch calendar list

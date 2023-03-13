@@ -135,7 +135,11 @@ const events = ref([]);
 // Calendar events store & subscription
 const calendarEventStore = useCalendarEventStore();
 calendarEventStore.$subscribe((mutation, state) => {
-  // re populate calendar when new event gets added
+  // close all open popovers
+  pShow.value = false;
+  popoverShow.value = false;
+
+  // re populate calendar when new event gets added or updated or deleted
   events.value = calendarEventStore.getFilteredCalendarEvents;
 });
 
@@ -144,6 +148,11 @@ const calendarStore = useCalendarStore();
 calendarStore.$subscribe((mutation, state) => {
   getDaysInMonth();
   getFirstDayOfMonth();
+
+  // API call when month change
+  calendarEventStore.fetchActiveMonthEvent().then(() => {
+    events.value = calendarEventStore.getFilteredCalendarEvents;
+  });
 });
 // Calendar list store & subscription
 const calendarListStore = useCalendarListStore();
@@ -305,8 +314,9 @@ onMounted(() => {
   getDaysInMonth();
   getFirstDayOfMonth();
   lastCalendarCells();
-  // API call
-  calendarEventStore.fetchEvent().then(() => {
+
+  // API call on mount
+  calendarEventStore.fetchActiveMonthEvent().then(() => {
     events.value = calendarEventStore.getFilteredCalendarEvents;
   });
 });

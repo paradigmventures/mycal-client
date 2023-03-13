@@ -4,6 +4,8 @@ import { computed, ref } from "vue";
 export const useNotification = defineStore("notification", () => {
   // calendar(calendar list) notification
   const isCalendarListNotificationOpen = ref(false);
+  // notification message
+  const calendarNotificationMessage = ref("");
 
   /**
    * get the value of the calendar list notification
@@ -13,10 +15,18 @@ export const useNotification = defineStore("notification", () => {
   );
 
   /**
+   * get the calendar notification message
+   */
+  const getCalendarNotificationMessage = computed(
+    () => calendarNotificationMessage.value
+  );
+
+  /**
    * set the calendar list notification value
    * @param {Boolean} value The height of the topnav to set
    */
-  const setIfCalendarListNotificationIsOpen = (value) => {
+  const setIfCalendarListNotificationIsOpen = (value, mssg) => {
+    calendarNotificationMessage.value = mssg;
     isCalendarListNotificationOpen.value = value;
   };
 
@@ -24,6 +34,7 @@ export const useNotification = defineStore("notification", () => {
 
   return {
     getIfCalendarListNotificationIsOpen,
+    getCalendarNotificationMessage,
     setIfCalendarListNotificationIsOpen,
   };
 });
